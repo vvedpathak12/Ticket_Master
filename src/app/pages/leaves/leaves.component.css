@@ -1,0 +1,126 @@
+.denyBtn {
+  background: rgba(244, 35, 35, 0.155);
+  color: rgba(56, 51, 51, 0.795);
+  border: none;
+  padding: 5px 20px 5px 20px;
+  font-weight: 500;
+}
+
+.denyBtn:active {
+  background: rgba(244, 35, 35, 0.262);
+  color: rgba(56, 51, 51, 0.795);
+  border: none;
+  padding: 5px 20px 5px 20px;
+  font-weight: 500;
+}
+
+.approveBtn {
+  background: rgba(35, 171, 244, 0.155);
+  color: rgba(56, 51, 51, 0.795);
+  border: none;
+  padding: 5px 20px 5px 20px;
+  font-weight: 500;
+}
+
+.approveBtn:active {
+  background: rgba(35, 171, 244, 0.262);
+  color: rgba(56, 51, 51, 0.795);
+  border: none;
+  padding: 5px 20px 5px 20px;
+  font-weight: 500;
+}
+
+.detailBtn {
+  color: rgba(5, 43, 196, 0.695);
+  margin-right: 35px;
+}
+
+.detailBtn:active {
+  color: rgba(2, 13, 60, 0.695);
+}
+
+.approvedBtn {
+  color: rgba(82, 207, 14, 0.823);
+  border: 1px solid rgba(82, 207, 14, 0.823) !important;
+  border-radius: 0;
+}
+
+.approvedBtn:active {
+  color: rgba(82, 207, 14, 0.695);
+}
+
+.rejectedBtn {
+  color: rgba(207, 43, 14, 0.823);
+  border: 1px solid rgba(207, 43, 14, 0.823) !important;
+  border-radius: 0;
+}
+
+.rejectedBtn:active {
+  color: rgba(207, 43, 14, 0.823);
+}
+
+.pendingBtn {
+  color: rgba(255, 163, 15, 0.823);
+  border: 1px solid rgba(255, 163, 15, 0.823) !important;
+  border-radius: 0;
+}
+
+.pendingBtn:active {
+  color: rgba(255, 163, 15, 0.823);
+}
+
+.detailBtnEmp {
+  color: rgba(5, 43, 196, 0.695);
+  border: 1px solid rgba(5, 43, 196, 0.695) !important;
+  border-radius: 0;
+}
+
+.detailBtnEmp:active {
+  color: rgba(2, 13, 60, 0.695);
+}
+
+.pendingLeaves {
+  color: rgba(255, 68, 0, 0.797);
+  margin-top: 8px;
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+:host ::ng-deep .p-badge {
+  background: rgba(255, 68, 0, 0.763) !important;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 1.2rem;
+  height: 1.2rem;
+  line-height: 1.2rem;
+  margin-top: 8px;
+  margin-left: 11px;
+}
+
+.empName {
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.650);
+}
+
+.empId {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.650);
+}
+
+.leaveDate {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.70);
+}
+
+.details {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.650);
+}
+
+:host ::ng-deep .innerHTML p {
+  margin-bottom: 0 !important;
+  text-transform: capitalize;
+}

@@ -1,0 +1,9 @@
+<span *ngIf="text.length <= wordLimit" [ngClass]="customClass">{{text}}</span>
+
+<span *ngIf="text.length > wordLimit && !showMore" [ngClass]="customClass">
+  {{text.substring(0,wordLimit)}}... <button class="btn btn-sm text-success fw-bold" (click)="showMore = true">Show More <i class="fa fa-angle-down"></i></button>
+</span>
+
+<span *ngIf="text.length > wordLimit && showMore" [ngClass]="customClass">
+  {{text}} <button class="btn btn-sm text-danger fw-bold" (click)="showMore = false">Show Less <i class="fa fa-angle-up"></i></button>
+</span>

@@ -1,0 +1,548 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <div class="flex-grow-1">
+        <h5 class="fw-medium text-dark mb-0 text-uppercase">Hello&nbsp;{{loggedInUserData.employeeName}}!</h5>
+        <p class="text-muted mb-0">Here's what's happening today.</p>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
+    <div class="row mt-3">
+      <div class="col-xl-3 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/department">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Departments</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{superAdminDashboardObj.totalDepartments}}</h4>
+                <a class="text-decoration-underline">View Total Departments</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-success rounded fs-3">
+                  <i class="fa fa-building-o text-dark" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-3 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/employee">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Employees</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{superAdminDashboardObj.totalEmployees}}</h4>
+                <a class="text-decoration-underline">View Total Employees</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-info rounded fs-3">
+                  <i class="fa fa-users text-primary" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-3 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{superAdminDashboardObj.totalTickets}}</h4>
+                <a class="text-decoration-underline">View Total Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-warning" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-3 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Un-Assigned Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{superAdminDashboardObj.totalUnAssignedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Un-Assigned Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-primary rounded fs-3">
+                  <i class="pi pi-ticket text-secondary fs-3" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-xl-3 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14">Total Assigned Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{superAdminDashboardObj.totalAssignedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Assigned Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-info rounded fs-3">
+                  <i class="fa fa-ticket text-success" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-3 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total In Progress Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{superAdminDashboardObj.totalInProgressTickets}}</h4>
+                <a class="text-decoration-underline">View Total In Progress Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-primary" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-3 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Closed Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{superAdminDashboardObj.totalClosedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Closed Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-primary rounded fs-3">
+                  <i class="fa fa-close text-danger fs-3" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="loggedInUserData.role == 'Employee'">
+    <div class="row mt-3">
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{empDashboardObj.totalTickets}}</h4>
+                <a class="text-decoration-underline">View Total Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-warning" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Un-Assigned Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{empDashboardObj.totalUnAssignedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Un-Assigned Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-primary rounded fs-3">
+                  <i class="pi pi-ticket text-secondary fs-3" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14">Total Assigned Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{empDashboardObj.totalAssignedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Assigned Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-info rounded fs-3">
+                  <i class="fa fa-ticket text-success" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+
+    </div>
+    <div class="row mt-4">
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total In Progress Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{empDashboardObj.totalInProgressTickets}}</h4>
+                <a class="text-decoration-underline">View Total In Progress Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-primary" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Closed Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{empDashboardObj.totalClosedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Closed Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-primary rounded fs-3">
+                  <i class="fa fa-close text-danger fs-3" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
+    <div class="row mt-3">
+      <div class="col-xl-6 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{adminEmployeeDashboardObj.totalTickets}}</h4>
+                <a class="text-decoration-underline">View Total Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-warning" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-6 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14">Total Assigned Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{adminEmployeeDashboardObj.totalAssignedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Assigned Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-info rounded fs-3">
+                  <i class="fa fa-ticket text-success" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+    </div>
+    <div class="row mt-4">
+      <div class="col-xl-6 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total In Progress Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{adminEmployeeDashboardObj.totalInProgressTickets}}
+                </h4>
+                <a class="text-decoration-underline">View Total In Progress Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-primary" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-6 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Closed Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{adminEmployeeDashboardObj.totalClosedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Closed Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-primary rounded fs-3">
+                  <i class="fa fa-close text-danger fs-3" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
+    <div class="row mt-3">
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/employee">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Employees</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{deptHeadDashboardObj.totalEmployees}}</h4>
+                <a class="text-decoration-underline">View Total Employees</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-info rounded fs-3">
+                  <i class="fa fa-users text-primary" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{deptHeadDashboardObj.totalTickets}}</h4>
+                <a class="text-decoration-underline">View Total Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-warning" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Un-Assigned Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{deptHeadDashboardObj.totalUnAssignedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Un-Assigned Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-primary rounded fs-3">
+                  <i class="pi pi-ticket text-secondary fs-3" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14">Total Assigned Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{deptHeadDashboardObj.totalAssignedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Assigned Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-info rounded fs-3">
+                  <i class="fa fa-ticket text-success" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total In Progress Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{deptHeadDashboardObj.totalInProgressTickets}}</h4>
+                <a class="text-decoration-underline">View Total In Progress Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-warning rounded fs-3">
+                  <i class="pi pi-ticket fs-3 text-primary" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+      <div class="col-xl-4 col-md-6">
+        <!-- card -->
+        <div class="card card-animate hand margin-card" routerLink="/new-ticket">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 overflow-hidden">
+                <p class="text-uppercase fw-medium text-muted text-truncate mb-0 fs-14"> Total Closed Tickets</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-end justify-content-between mt-3">
+              <div [@counterAnimation]>
+                <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{deptHeadDashboardObj.totalClosedTickets}}</h4>
+                <a class="text-decoration-underline">View Total Closed Tickets</a>
+              </div>
+              <div class="avatar-sm flex-shrink-0">
+                <span class="avatar-title bg-soft-primary rounded fs-3">
+                  <i class="fa fa-close text-danger fs-3" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </div><!-- end card body -->
+        </div><!-- end card -->
+      </div><!-- end col -->
+    </div>
+  </ng-container>
+</div>

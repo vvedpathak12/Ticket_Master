@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand navbar-dark bg-white ps-0 pe-2 py-0">
+  <div class="side-nav-button me-3 text-light" (click)="sideBarToggle()">
+    <i class="fa fa-bars"></i>
+  </div>
+
+  <div class="navbar-collapse">
+    <ul class="navbar-nav me-auto" >
+      <li class="nav-item dropdown">
+        <span class="p-input-icon-left" *ngIf="showInputSearch">
+          <i class="fa fa-search"></i>
+          <input type="search" class="form-control" [(ngModel)]="searchText" (ngModelChange)="onSearch($event)"
+            pInputText placeholder="Search" />
+        </span>
+      </li>
+    </ul>
+    <div class="dropdown">
+      <button class="btn btn-light dropdown-toggle ms-2 me-md-4 me-lg-5 me-xl-5" type="button" id="userDropdown"
+        data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fa fa-user me-1"></i>
+        {{loggedUserData.employeeName | uppercase}}
+      </button>
+
+      <ul class="dropdown-menu" aria-labelledby="userDropdown"
+        [ngClass]="loggedUserData.role == 'Admin Department Employee'|| loggedUserData.role == 'Department Head' ?'customDropdown-menu':'dropdown-menu'">
+        <li>
+          <ng-container *ngIf="loggedUserData.role !== 'Admin Department Employee'">
+            <a class="dropdown-item hand fw-bold" [pTooltip]="loggedUserData.role" tooltipPosition="left"
+              tooltipStyleClass="custom-tooltip"><i class="fa fa-user-secret me-2"></i>{{loggedUserData.role |
+              titlecase}}</a>
+          </ng-container>
+          <ng-container *ngIf="loggedUserData.role == 'Admin Department Employee'">
+            <a class="dropdown-item hand fw-bold" [pTooltip]="loggedUserData.role" tooltipPosition="left"
+              tooltipStyleClass="custom-tooltip"><i class="fa fa-user-secret me-2"></i>{{loggedUserData.role | titlecase
+              | slice: 0:20}}...</a>
+          </ng-container>
+        </li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li>
+          <a class="dropdown-item hand" (click)="onLogOut()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

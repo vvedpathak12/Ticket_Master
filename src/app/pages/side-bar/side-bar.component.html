@@ -1,0 +1,55 @@
+<div class="side-nav-content">
+  <ul class="nav-list" [ngClass]="{'nav-list-open':sideBarStatus}">
+    <li class="nav-list-item">
+      <ng-container *ngIf="!sideBarStatus">
+        <i class="fa fa-tachometer" routerLink="dashboard" pTooltip="Dashboard" tooltipPosition="right"></i>
+      </ng-container>
+      <ng-container *ngIf="sideBarStatus">
+        <i class="fa fa-tachometer" routerLink="dashboard"></i>
+      </ng-container>
+      <a routerLink="dashboard" routerLinkActive="activeLink">Dashboard</a>
+    </li>
+    <li class="nav-list-item" *ngIf="loggedUserData.role == 'Super Admin' || loggedUserData.role == 'Admin'">
+      <ng-container *ngIf="!sideBarStatus">
+        <i class="fa fa-users" routerLink="employee" pTooltip="Employee" tooltipPosition="right"></i>
+      </ng-container>
+      <ng-container *ngIf="sideBarStatus">
+        <i class="fa fa-users" routerLink="employee"></i>
+      </ng-container>
+      <a class="nav-link" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show" routerLink="employee"
+        routerLinkActive="activeLink">Employee</a>
+    </li>
+    <li class="nav-list-item" *ngIf="loggedUserData.role == 'Super Admin' || loggedUserData.role == 'Admin'">
+      <ng-container *ngIf="!sideBarStatus">
+        <i class="fa fa-building" routerLink="department" pTooltip="Department" tooltipPosition="right"></i>
+      </ng-container>
+      <ng-container *ngIf="sideBarStatus">
+        <i class="fa fa-building" routerLink="department"></i>
+      </ng-container>
+      <a class="nav-link" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show" routerLink="department"
+        routerLinkActive="activeLink">Department</a>
+    </li>
+    <li class="nav-list-item"
+      *ngIf="loggedUserData.role == 'Super Admin' || loggedUserData.role == 'Admin' || loggedUserData.role == 'Employee' || loggedUserData.role == 'employee' || loggedUserData.role == 'Department Head' || loggedUserData.role == 'Admin Department Employee'">
+      <ng-container *ngIf="!sideBarStatus">
+        <i class="fa fa-ticket" routerLink="new-ticket" pTooltip="New-Ticket" tooltipPosition="right"></i>
+      </ng-container>
+      <ng-container *ngIf="sideBarStatus">
+        <i class="fa fa-ticket" routerLink="new-ticket"></i>
+      </ng-container>
+      <a class="nav-link" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show" routerLink="new-ticket"
+        routerLinkActive="activeLink">New-Ticket</a>
+    </li>
+    <li class="nav-list-item"
+      *ngIf="loggedUserData.role == 'Super Admin' || loggedUserData.role == 'Employee' || loggedUserData.role == 'employee' || loggedUserData.role == 'Department Head' || loggedUserData.role == 'Admin Department Employee'">
+      <span class="fa-stack fa-lg mt-3" routerLink="leaves" [ngClass]="{'me-1': sideBarStatus, 'me-3': !sideBarStatus}"
+        pTooltip="Leave Management" tooltipPosition="right">
+        <i class="pi pi-refresh fa-stack-2x repeatIcon"></i>
+        <i class="pi pi-check fa-stack-1x fa-inverse checkIcon"></i>
+      </span>
+      <a class="nav-link" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show" routerLink="leaves"
+        routerLinkActive="activeLink" [ngClass]="{'checkIconSidebarOpen': isActive('/leaves'),
+        'checkIconRouterLinkNotActive': !isActive('/leaves')}">Leave Management</a>
+    </li>
+  </ul>
+</div>

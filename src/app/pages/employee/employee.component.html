@@ -1,0 +1,143 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <app-card [headerClass]="'bg-dark'" [headerTxt]="'Employee'" [showAddBtn]="true" [btnTxt]="'Add'"
+        (btnClick)="onAddEmp()">
+        <div class="row">
+          <div class="col-md-4 my-2" *ngFor="let emp of filteredEmpArr">
+            <app-card [cardHeight]="'150px'" [cardDesign]="'cardDesign'" [showActionBtn]="true"
+              [headerStyle]="'rgb(66, 66, 66)'" [iconClass]="'fa fa-user me-2'"
+              [headerTxt]="emp.employeeName | titlecase" [headerTxtClass]="'fw-bold'" (editBtnClick)="onEdit(emp)"
+              (deleteBtnClick)="onDelete(emp)">
+              <div class="row">
+                <div class="col-md-5">
+                  <i class="fa fa-phone me-2"></i>{{emp.contactNo}}
+                </div>
+                <div class="col-md-7">
+                  <i class="fa fa-envelope me-2"></i>{{emp.emailId}}
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-md-5">
+                  <i class="fa fa-building me-2"></i>{{emp.deptName}}
+                </div>
+                <div class="col-md-7">
+                  <i class="fa fa-user-secret me-2"></i>{{emp.role}}
+                </div>
+              </div>
+            </app-card>
+          </div>
+        </div>
+      </app-card>
+    </div>
+
+    <!-- modal starts -->
+    <div class="row">
+      <div class="col-md-12">
+        <form #empForm="ngForm">
+          <p-dialog header="Add Employee" [(visible)]="displayModalEmp" [modal]="true" [style]="{width: '50vw'}"
+            [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000" [draggable]="false"
+            [resizable]="false">
+            <div class="row">
+              <div class="col-md-6">
+                <label class="fw-bold my-1">Employee Name</label>
+                <input type="text" id="float-input" class="form-control" name="employeeName" #employeeName="ngModel"
+                  required [(ngModel)]="empObj.employeeName" pInputText placeholder="Enter Employee Name">
+                <div class="validation-error" *ngIf="employeeName.touched || employeeName.dirty">
+                  <span *ngIf="employeeName.errors?.['required']">This field is required</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold my-1">Contact</label>
+                <input type="text" id="float-input" class="form-control" name="contactNo" #contactNo="ngModel"
+                  [pattern]="contactPattern" required [(ngModel)]="empObj.contactNo" pInputText
+                  placeholder="Enter Contact">
+                <div class="validation-error" *ngIf="contactNo.touched || contactNo.dirty">
+                  <span *ngIf="contactNo.errors?.['required']">This field is required</span>
+                  <span *ngIf="contactNo.errors?.['pattern']">Please, Enter 10 digit Mobile Number.</span>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label class="fw-bold my-1">Email</label>
+                <input type="text" id="float-input" class="form-control" name="emailId" #emailId="ngModel"
+                  [pattern]="emailPattern" required [(ngModel)]="empObj.emailId" pInputText placeholder="Enter Email">
+                <div class="validation-error" *ngIf="emailId.touched || emailId.dirty">
+                  <span *ngIf="emailId.errors?.['required']">Email is required</span>
+                  <span *ngIf="emailId.errors?.['pattern']">Please enter a valid email address</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold my-1">Department</label>
+                <p-dropdown id="float-input" name="deptName" #deptId="ngModel" [required]="true"
+                  [options]="($department | async)!" [(ngModel)]="empObj.deptId" optionLabel="deptName"
+                  optionValue="deptId" [filter]="true" filterBy="deptName" [showClear]="empObj.deptId !== 0"
+                  placeholder="Select Department" [editable]="true" [style]="{'width':'100%'}" [appendTo]="'body'">
+                </p-dropdown>
+                <div class="validation-error" *ngIf="deptId.touched || deptId.dirty">
+                  <span *ngIf="deptId.errors?.['required']">This field is required</span>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label class="fw-bold my-1">Password</label>
+                <input type="text" id="float-input" class="form-control" name="password" #password="ngModel" required
+                  [(ngModel)]="empObj.password" pInputText placeholder="Enter Password">
+                <div class="validation-error" *ngIf="password.touched || password.dirty">
+                  <span *ngIf="password.errors?.['required']">Password is required</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-bold my-1">Gender</label>
+                <div>
+                  <p-radioButton name="gender" #gender="ngModel" required value="male"
+                    [(ngModel)]="empObj.gender"></p-radioButton> Male
+                  <p-radioButton name="gender" #gender="ngModel" required value="female"
+                    [(ngModel)]="empObj.gender"></p-radioButton>
+                  FeMale
+                </div>
+                <div class="validation-error" *ngIf="gender.touched || gender.dirty">
+                  <span *ngIf="gender.errors?.['required']">This field is required</span>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-12">
+                <label class="fw-bold my-1">Role</label>
+                <!-- <select class="form-select" name="role" #role="ngModel" required [(ngModel)]="empObj.role">
+                  <option value="null" disabled>Select Role</option>
+                  <option value="Employee">Employee</option>
+                  <option value="Admin Department Employee">Admin Department Employee</option>
+                  <option value="Super Admin">Super Admin</option>
+                  <option value="Department Head">Department Head</option>
+                </select> -->
+                <select class="form-select" name="role" #role="ngModel" required [(ngModel)]="empObj.role">
+                  <option value="null" disabled>Select Role</option>
+                  <option *ngFor="let role of $roles | async">{{role}}</option>
+                </select>
+              </div>
+              <div class="validation-error" *ngIf="role.touched || role.dirty">
+                <span *ngIf="role.errors?.['required']">This field is required</span>
+              </div>
+            </div>
+            <ng-template pTemplate="footer">
+              <button pButton pRipple class="p-button-success p-button-sm" label="Save" (click)="onSaveEmp()"
+                *ngIf="empObj.employeeId == 0" [disabled]="empForm.invalid">
+                <span *ngIf="isApiCallInProgress" class="spinner-border spinner-border-sm me-2"></span>
+              </button>
+              <button pButton pRipple class="p-button-warning p-button-sm" label="Update" (click)="onUpdateEmp()"
+                *ngIf="empObj.employeeId !== 0">
+                <span *ngIf="isApiCallInProgress" class="spinner-border spinner-border-sm me-2"></span>
+              </button>
+              <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Cancel"
+                (click)="onCancel()"></button>
+            </ng-template>
+          </p-dialog>
+        </form>
+      </div>
+    </div>
+    <!-- modal ends -->
+  </div>
+</div>

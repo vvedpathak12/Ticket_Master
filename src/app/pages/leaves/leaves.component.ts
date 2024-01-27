@@ -1,0 +1,248 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { ConfirmationService } from 'primeng/api';
+import { leaveObject } from 'src/app/core/models/classes/classes';
+import { ILeaves } from 'src/app/core/models/interfaces/IUser';
+import { LeavesService } from 'src/app/core/services/leaves.service';
+import { MasterService } from 'src/app/core/services/master.service';
+
+@Component({
+  selector: 'app-leaves',
+  templateUrl: './leaves.component.html',
+  styleUrls: ['./leaves.component.css'],
+})
+export class LeavesComponent implements OnInit {
+  @ViewChild('createLeaveFrm') createLeaveFrm!:NgForm;
+  leaveObj: leaveObject;
+  leavesArr: ILeaves[];
+  todaysDate: Date = new Date();
+  displayModalLeaveDetails: boolean;
+  displayModalCreateLeave: boolean;
+  loggedInUserData: any;
+  isApiCallInProgress: boolean;
+  isApiCallInProgressApprove: boolean;
+  isApiCallInProgressDeny: boolean;
+  pendingLeavesCount: number;
+
+
+  constructor(private _masterSrv: MasterService, private _leaveSrv: LeavesService, private router: Router, private toastr: ToastrService, private confirm: ConfirmationService) {
+    this.leaveObj = new leaveObject();
+    this.leavesArr = [];
+    let localData = sessionStorage.getItem('loginUserData');
+    if (localData != null) {
+      this.loggedInUserData = JSON.parse(localData);
+    };
+    this._masterSrv.showLoader.next(false);
+    this.displayModalLeaveDetails = false;
+    this.displayModalCreateLeave = false;
+    this.isApiCallInProgress = false;
+    this.isApiCallInProgressApprove = false;
+    this.isApiCallInProgressDeny = false;
+    this.pendingLeavesCount = this.leavesArr.length;
+    this._masterSrv.showLoader.next(false);
+  }
+
+  ngOnInit(): void {
+    this.loadLeavesByRoles();
+  }
+
+  loadLeavesByRoles() {
+    if (this.loggedInUserData.role == 'Super Admin') {
+      this.loadAllLeaves();
+    } else if (this.loggedInUserData.role == 'Employee') {
+      this.loadAllLeavesByEmployeeId();
+    } else if (this.loggedInUserData.role == 'Department Head') {
+      this.loadLeavesForApprovalBySuperwiserId();
+    } else if (this.loggedInUserData.role == 'Admin Department Employee') {
+      this.loadAllLeavesByEmployeeId();
+    }
+  }
+
+  loadAllLeaves() {
+    this._masterSrv.showLoader.next(true);
+    this._leaveSrv.getAllLeaves().subscribe((res: any) => {
+      if (res.result) {
+        this._masterSrv.showLoader.next(false);
+        this.leavesArr = res.data;
+      } else {
+        this._masterSrv.showLoader.next(false);
+      }
+    }, (err: any) => {
+      this._masterSrv.showLoader.next(false);
+    });
+  }
+
+  loadAllLeavesByEmployeeId() {
+    this._masterSrv.showLoader.next(true);
+    this._leaveSrv.getAllLeavesByEmployeeId(this.loggedInUserData.employeeId).subscribe((res: any) => {
+      if (res.result) {
+        this._masterSrv.showLoader.next(false);
+        this.leavesArr = res.data;
+      } else {
+        this._masterSrv.showLoader.next(false);
+      }
+    }, (err: any) => {
+      this._masterSrv.showLoader.next(false);
+    });
+  }
+
+  loadLeavesForApprovalBySuperwiserId() {
+    this._masterSrv.showLoader.next(true);
+    this._leaveSrv.getLeavesForApprovalBySuperwiserId(this.loggedInUserData.employeeId).subscribe((res: any) => {
+      if (res.result) {
+        this._masterSrv.showLoader.next(false);
+        this.leavesArr = res.data;
+      } else {
+        this._masterSrv.showLoader.next(false);
+      }
+    }, (err: any) => {
+      this._masterSrv.showLoader.next(false);
+    });
+  }
+
+  openLeaveDetails(leaves: leaveObject) {
+    this.displayModalLeaveDetails = true;
+    this.leaveObj = leaves;
+  }
+
+  closeLeaveDetails() {
+    this.displayModalLeaveDetails = false;
+  }
+
+  openCreateLeaveModal() {
+    this.displayModalCreateLeave = true;
+    this.leaveObj = new leaveObject();
+  }
+
+  getPendingLeavesCount() {
+    return this.leavesArr.filter((count: any) => count.approvedDate == null).length;
+  }
+
+  onCreateLeave() {
+    if (!this.isApiCallInProgress) {
+      this.isApiCallInProgress = true;
+      this.leaveObj.employeeId = this.loggedInUserData.employeeId;
+      this._leaveSrv.addLeave(this.leaveObj).subscribe((res: any) => {
+        if (res.result) {
+          this.isApiCallInProgress = false;
+          this.toastr.success('Applied For Leave Successfully');
+          this.onResetLeave();
+          this.loadLeavesByRoles();
+        } else {
+          this.isApiCallInProgress = false;
+          this.toastr.error(res.message);
+        }
+      }, (err: any) => {
+        this.isApiCallInProgress = false;
+        this.toastr.success(err.message);
+      });
+    }
+  }
+
+  approveLeave(leaveId: number) {
+    this.confirm.confirm({
+      message: 'Are you sure that you want to approve this leave request?',
+      accept: () => {
+        if (!this.isApiCallInProgressApprove) {
+          this.isApiCallInProgressApprove = true;
+          this._leaveSrv.approveLeave(leaveId).subscribe((res: any) => {
+            if (res.result) {
+              debugger
+              this.isApiCallInProgressApprove = false;
+              this.toastr.success(res.message);
+              this.loadLeavesByRoles();
+            } else {
+              this.isApiCallInProgressApprove = false;
+              this.toastr.error(res.message);
+            }
+          }, (err: any) => {
+            this.isApiCallInProgressApprove = false;
+            this.toastr.error(err.message);
+          });
+        }
+      }
+    });
+  }
+
+  denyLeave(leaveId: number) {
+    this.confirm.confirm({
+      message: 'Are you sure that you want to reject this leave request?',
+      accept: () => {
+        if (!this.isApiCallInProgressDeny) {
+          this.isApiCallInProgressDeny = true;
+          this._leaveSrv.rejectLeave(leaveId).subscribe((res: any) => {
+            if (res.result) {
+              this.isApiCallInProgressDeny = false;
+              this.toastr.error(res.message);
+              this.loadLeavesByRoles();
+            } else {
+              this.isApiCallInProgressDeny = false;
+              this.toastr.error(res.message);
+            }
+          }, (err: any) => {
+            this.isApiCallInProgressDeny = false;
+            this.toastr.error(err.message);
+          });
+        }
+      }
+    });
+  }
+
+  onDateChange() {
+    if (this.leaveObj.fromDate && this.leaveObj.toDate) {
+      const from = new Date(this.leaveObj.fromDate);
+      const to = new Date(this.leaveObj.toDate);
+      const today = new Date();
+      if (from <= today && to <= today) {
+        // Reset noOfDays if fromDate or toDate is before today
+        this.leaveObj.noOfDays = 0;
+        this.leaveObj.fromDate = null;
+        this.leaveObj.toDate = null;
+      } else if (from <= to) {
+        const diffInMilliseconds = Math.abs(to.getTime() - from.getTime());
+        const diffInDays = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24));
+        const { months, remainingDays } = this.getMonthsAndRemainingDays(from, to);
+        const totalDays = months * 30 + remainingDays; // Assuming 30 days in a month for simplicity
+        this.leaveObj.noOfDays = totalDays;
+      } else {
+        // Reset noOfDays if toDate is before fromDate
+        this.leaveObj.noOfDays = 0;
+      }
+    }
+  }
+
+  formatDifference(days: number, months: number): { months: number, remainingDays: number } {
+    let totalDays = months * 30 + days; // Assuming 30 days in a month for simplicity
+    return { months, remainingDays: totalDays };
+  }
+
+  getMonthsAndRemainingDays(startDate: Date, endDate: Date): { months: number, remainingDays: number } {
+    let months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + endDate.getMonth() - startDate.getMonth();
+    let remainingDays = 0;
+    // Adjust months if the day of the month in the end date is earlier than the start date
+    if (endDate.getDate() < startDate.getDate()) {
+      months -= 1;
+      // Calculate the remaining days by adding the days in the end month and subtracting the days in the start month
+      remainingDays = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate() - startDate.getDate() + endDate.getDate();
+    } else {
+      remainingDays = endDate.getDate() - startDate.getDate();
+    }
+    return { months, remainingDays };
+  }
+
+  getTodayDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    const day = ('0' + today.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
+  onResetLeave() {
+    this.createLeaveFrm.resetForm();
+    this.displayModalCreateLeave = false;
+  }
+
+}

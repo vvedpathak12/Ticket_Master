@@ -1,0 +1,212 @@
+<div class="container-fluid">
+  <div class="row" *ngIf="!showTicketForm">
+    <div class="col-md-12">
+      <app-card [headerTxt]="'Ticket List'" [headerClass]="'bg-dark'" [showAddBtn]="true" [btnTxt]="'New Ticket'"
+        (btnClick)="addNewTicket()">
+        <div class="row">
+          <div class="col-md-12">
+            <p-table [value]="filteredTicketArr" [paginator]="true" [rows]="10"
+              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+              [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50,75,100,150]"
+              styleClass="p-datatable-gridlines p-datatable-sm" [responsive]="true">
+              <ng-template pTemplate="header">
+                <tr class="button-cell">
+                  <th style="width: 3%;">Sr</th>
+                  <th pSortableColumn="ticketNo">Ticket No.<p-sortIcon field="ticketNo"></p-sortIcon></th>
+                  <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
+                    <th pSortableColumn="deptName">Department<p-sortIcon field="deptName"></p-sortIcon> </th>
+                    <th pSortableColumn="contactNo">Contact<p-sortIcon field="contactNo"></p-sortIcon></th>
+                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
+                    <th pSortableColumn="createdByEmployee">Created By<p-sortIcon
+                        field="createdByEmployee"></p-sortIcon></th>
+                    <th pSortableColumn="assignedToEmployee">Assigned To<p-sortIcon
+                        field="assignedToEmployee"></p-sortIcon></th>
+                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
+                  </ng-container>
+                  <ng-container *ngIf="loggedInUserData.role == 'Employee'">
+                    <th pSortableColumn="deptName">Department<p-sortIcon field="deptName"></p-sortIcon> </th>
+                    <th pSortableColumn="contactNo">Contact<p-sortIcon field="contactNo"></p-sortIcon></th>
+                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
+                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
+                    <th pSortableColumn="assignedToEmployee">Assigned To<p-sortIcon
+                        field="assignedToEmployee"></p-sortIcon></th>
+                  </ng-container>
+                  <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
+                    <th pSortableColumn="employeeName">Created By<p-sortIcon field="employeeName"></p-sortIcon> </th>
+                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
+                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
+                    <th pSortableColumn="assignedToEmployee">Assigned To<p-sortIcon
+                        field="assignedToEmployee"></p-sortIcon></th>
+                    <th pSortableColumn="requestDetails">Details<p-sortIcon field="requestDetails"></p-sortIcon></th>
+                  </ng-container>
+                  <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
+                    <th pSortableColumn="deptName">Department<p-sortIcon field="deptName"></p-sortIcon> </th>
+                    <th pSortableColumn="employeeName">Created By<p-sortIcon field="employeeName"></p-sortIcon> </th>
+                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
+                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
+                    <th pSortableColumn="requestDetails">Details<p-sortIcon field="requestDetails"></p-sortIcon></th>
+                  </ng-container>
+                  <th style="width: 10%;">Action</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item let-sr="rowIndex">
+                <tr class="button-cell">
+                  <td>{{sr+1}}</td>
+                  <td> {{item.ticketNo}}</td>
+                  <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
+                    <td> {{item.deptName}}</td>
+                    <td> {{item.contactNo}}</td>
+                    <td> {{item.severity}}</td>
+                    <td> {{item.createdByEmployee}}</td>
+                    <td> {{item.assignedToEmployee | na}}</td>
+                    <td> <p-badge
+                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                        [value]="item.state"></p-badge>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngIf="loggedInUserData.role == 'Employee'">
+                    <td> {{item.deptName}}</td>
+                    <td> {{item.contactNo}}</td>
+                    <td> {{item.severity}}</td>
+                    <td> <p-badge
+                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                        [value]="item.state"></p-badge>
+                    </td>
+                    <td> {{item.assignedToEmployee | na}}</td>
+                  </ng-container>
+                  <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
+                    <td> {{item.employeeName}}</td>
+                    <td> {{item.severity}}</td>
+                    <td> <p-badge
+                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                        [value]="item.state"></p-badge>
+                    </td>
+                    <td> {{item.assignedToEmployee | na}}</td>
+                    <td [innerHTML]="item.requestDetails"></td>
+                  </ng-container>
+                  <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
+                    <td> {{item.deptName}}</td>
+                    <td> {{item.employeeName}}</td>
+                    <td> {{item.severity}}</td>
+                    <td> <p-badge
+                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                        [value]="item.state"></p-badge>
+                    </td>
+                    <td [innerHTML]="item.requestDetails"></td>
+                  </ng-container>
+                  <td>
+                    <button *ngIf="loggedInUserData.role == 'Department Head'" pButton pRipple
+                      class="p-button-success p-button-sm me-2"
+                      (click)="openAssignTicketModal(item.ticketId)">Assign</button>
+                    <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'Assigned'"
+                      pButton pRipple class="p-button-success p-button-sm me-2"
+                      (click)="startAssignedTicket(item.ticketId)">Start Ticket</button>
+                    <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'In-Progress'"
+                      pButton pRipple class="p-button-danger p-button-sm me-2"
+                      (click)="closeAssignedTicket(item.ticketId)">Close Ticket</button>
+                    <button pButton pRipple class="p-button-danger p-button-sm" (click)="onDelete(item)"
+                      *ngIf="item.state == 'Un-Assigned'">Delete
+                      Ticket</button>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="8" class="text-center">No Record Found</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </app-card>
+      <!-- modal starts -->
+      <div class="row">
+        <div class="col-md-12">
+          <form #assignTicketForm="ngForm">
+            <p-dialog header="Add Department" [(visible)]="displayModalAssignTicket" [modal]="true"
+              [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000"
+              [draggable]="false" [resizable]="false">
+              <div class="row">
+                <div class="col-md-12">
+                  <label class="fw-bold my-1">Assign Ticket To</label>
+                  <p-dropdown id="float-input" name="assignedTo" #assignedTo="ngModel" [required]="true"
+                    [options]="($emp | async)!" [(ngModel)]="assignTicketObj.assignedTo" optionLabel="employeeName"
+                    optionValue="employeeId" [filter]="true" filterBy="employeeName"
+                    [showClear]="assignTicketObj.assignedTo !== 0" placeholder="Assign Ticket To" [editable]="true"
+                    [style]="{'width':'100%'}" [appendTo]="'body'">
+                  </p-dropdown>
+                  <div class="validation-error" *ngIf="assignedTo.touched || assignedTo.dirty">
+                    <span *ngIf="assignedTo.errors?.['required']">This field is required</span>
+                  </div>
+                </div>
+              </div>
+              <ng-template pTemplate="footer">
+                <button pButton pRipple class="p-button-success p-button-sm" label="Save" (click)="assignTicket()"
+                  [disabled]="assignTicketForm.invalid">
+                  <span *ngIf="isApiCallInProgress" class="spinner-border spinner-border-sm me-2"></span>
+                </button>
+                <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Cancel"
+                  (click)="onCancel()"></button>
+              </ng-template>
+            </p-dialog>
+          </form>
+        </div>
+      </div>
+      <!-- modal ends -->
+    </div>
+  </div>
+  <div class="row mt-3" *ngIf="showTicketForm">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <app-card [headerTxt]="'New Ticket'" [headerClass]="'bg-dark'" [showAddBtn]="true" [btnTxt]="'Go to Tickets'"
+        (btnClick)="addNewTicket()">
+        <form #ticketFrm="ngForm">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="fw-bold my-1">Select Department</label>
+              <p-dropdown id="float-input" name="deptName" #deptName="ngModel" [required]="true"
+                [options]="($department | async)!" [(ngModel)]="ticketObj.deptId" optionLabel="deptName" optionValue="deptId"
+                [filter]="true" filterBy="deptName" [showClear]="ticketObj.deptId !== 0" placeholder="Select Department"
+                [editable]="true" [style]="{'width':'100%'}" [appendTo]="'body'">
+              </p-dropdown>
+              <div class="validation-error" *ngIf="deptName.touched || deptName.dirty">
+                <span *ngIf="deptName.errors?.['required']">This field is required</span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold my-1">Select Severity</label>
+              <select class="form-select" name="severity" #severity="ngModel" required [(ngModel)]="ticketObj.severity">
+                <option value="" disabled>Select Severity</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+              <div class="validation-error" *ngIf="severity.touched || severity.dirty">
+                <span *ngIf="severity.errors?.['required']">This field is required</span>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <label class="fw-bold my-1">Request Details</label>
+              <p-editor name="requestDetails" #requestDetails="ngModel" [(ngModel)]="ticketObj.requestDetails"
+                [style]="{'height':'100px'}" [required]="true"></p-editor>
+              <div class="validation-error" *ngIf="requestDetails.touched || requestDetails.dirty">
+                <span *ngIf="requestDetails.errors?.['required']">Request details required!</span>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-4 mb-2">
+            <div class="col-md-12 text-center">
+              <button pButton pRipple class="p-button-success p-button-sm me-3" (click)="createNewTicket()"
+                [disabled]="ticketFrm.invalid">Create Ticket
+                <span *ngIf="isApiCallInProgress" class="spinner-border spinner-border-sm ms-2"></span></button>
+              <button pButton pRipple class="p-button-danger p-button-sm" (click)="onReset()">Reset</button>
+            </div>
+          </div>
+        </form>
+      </app-card>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+</div>

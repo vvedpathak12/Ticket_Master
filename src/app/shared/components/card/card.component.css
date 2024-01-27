@@ -1,0 +1,11 @@
+.fa-pencil:hover {
+  color: rgb(243, 156, 18);
+  font-size: larger;
+  transition: 0.1s ease-in;
+}
+
+.fa-trash:hover {
+  color: rgba(255, 0, 0, 0.925);
+  font-size: larger;
+  transition: 0.1s ease-in;
+}

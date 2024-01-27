@@ -1,0 +1,236 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
+      <h4 class="mb-0">Leave Management</h4>
+      <span class="ps-1" [ngStyle]="{'font-size':'14px','font-weight':'500'}">{{todaysDate | date:'MMMM dd, yyyy'}}</span>
+    </div>
+    <div class="col-12 col-md-6 col-lg-6 col-xxl-6 text-center mt-3 mt-md-0 text-md-end">
+      <button pButton pRipple type="button" label="Create" icon="pi pi-plus"
+        class="p-button-rounded p-button-success p-button-sm" (click)="openCreateLeaveModal()"></button>
+    </div>
+  </div>
+
+  <div class="row mt-2 mt-md-5">
+    <div class="col-md-12">
+      <ng-container *ngIf="leavesArr.length !== 0">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="d-flex">
+              <h4>Leave Approval</h4>
+              <p-badge [value]="getPendingLeavesCount().toString()"></p-badge><small class="pendingLeaves"
+                [ngStyle]="{'font-size':'13px'}">Pending</small>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6 mb-4 col-12" *ngFor="let leaves of leavesArr">
+            <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
+              <div class="row">
+                <div class="col-md-1 col-12 col-lg-1">
+                  <ngx-avatar [name]="leaves.employeeName"></ngx-avatar>
+                </div>
+                <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
+                  <span class="empName">{{leaves.employeeName | titlecase}}</span>
+                  <h6 class="empId">{{'20' + leaves.employeeId}}</h6>
+                </div>
+                <div class="col-md-3 col-lg-4 text-center">
+                  <span class="details">{{leaves.leaveType | titlecase}}</span>
+                </div>
+                <div class="col-md-2 col-lg-2">
+                  <span class="details">{{leaves.noOfDays}} days</span>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-6 col-lg-6">
+                  <h4 class="fw-bold innerHTML" [innerHTML]="leaves.details" style="margin-bottom: 0 !important;"></h4>
+                  <p class="pt-1 leaveDate">{{leaves.fromDate | date:'dd MMMM'}} - {{leaves.toDate | date:'dd MMMM'}}
+                  </p>
+                </div>
+                <ng-container
+                  *ngIf="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate == null">
+                  <div class="col-md-2 buttonCell">
+                    <button class="btn btn-sm denyBtn mt-3" (click)="denyLeave(leaves.leaveId)">Deny <i
+                        *ngIf="isApiCallInProgressDeny" class="fa fa-spin fa-spinner"></i></button>
+                  </div>
+                  <div class="col-md-2 buttonCell">
+                    <button class="btn btn-sm approveBtn mt-3" (click)="approveLeave(leaves.leaveId)">Approve <i
+                        *ngIf="isApiCallInProgressApprove" class="fa fa-spin fa-spinner"></i></button>
+                  </div>
+                </ng-container>
+                <ng-container
+                  *ngIf="loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head'">
+                  <div class="col-md-2" [ngClass]="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate !== null?'col-md-6 col-lg-6 text-end':'col-md-2'">
+                    <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
+                      *ngIf="leaves.isApproved == true">Approved</button>
+                    <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
+                      *ngIf="leaves.isApproved == false">Rejected</button>
+                    <button class="btn btn-sm detailBtn mt-3 fw-bold border-0"
+                      (click)="openLeaveDetails(leaves)">Detail</button>
+                  </div>
+                </ng-container>
+                <ng-container
+                  *ngIf="loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee'">
+                  <div class="col-md-2"
+                    [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'col-md-6 text-end':'col-md-2'">
+                    <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
+                      *ngIf="leaves.isApproved == true">Approved</button>
+                    <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
+                      *ngIf="leaves.isApproved == false">Rejected</button>
+                      <button class="btn btn-sm pendingBtn mt-3 me-3 fw-bold"
+                      *ngIf="leaves.isApproved == null">Pending</button>
+                    <button class="btn btn-sm mt-3 fw-bold border-0"
+                      [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'detailBtnEmp me-5':''"
+                      (click)="openLeaveDetails(leaves)">Detail</button>
+                  </div>
+                </ng-container>
+              </div>
+            </app-card>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="leavesArr.length == 0">
+        <div class="text-center">
+          <span class="text-center text-success fw-bold" [ngStyle]="{'font-size':'18px'}">No Pending Leaves For
+            Approval</span>
+          <i class="pi pi-times-circle ms-2 text-danger" aria-hidden="true"></i>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<!-- Create Leave Modal starts here -->
+<div class="row">
+  <div class="col-md-12">
+    <form #createLeaveFrm="ngForm">
+      <p-dialog header="Apply for a Leave" [(visible)]="displayModalCreateLeave" [modal]="true"
+        [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000"
+        [draggable]="false" [resizable]="false">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="fw-bold">From Date</label>
+            <input id="float-input" pInputText type="date" class="form-control" [(ngModel)]="leaveObj.fromDate"
+              (ngModelChange)="onDateChange()" [min]="getTodayDate()" name="fromDate" #fromDate="ngModel" required>
+            <div class="validation-error" *ngIf="fromDate.touched || fromDate.dirty">
+              <span *ngIf="fromDate.errors?.['required']">Select Required Start Date</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold">To Date</label>
+            <input pInputText type="date" class="form-control" [(ngModel)]="leaveObj.toDate"
+              (ngModelChange)="onDateChange()" [min]="getTodayDate()" name="toDate" #toDate="ngModel" required>
+            <div class="validation-error" *ngIf="toDate.touched || toDate.dirty">
+              <span *ngIf="toDate.errors?.['required']">Select Required Last Date</span>
+            </div>
+          </div>
+
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <label class="fw-bold">Total Absent Days</label>
+            <input pInputText type="text" class="form-control" [(ngModel)]="leaveObj.noOfDays" name="noOfDays"
+              placeholder="Total Absent Days" disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold">Leave Type</label>
+            <select class="form-select" [(ngModel)]="leaveObj.leaveType" name="leaveType" #leaveType="ngModel" required>
+              <option value="" disabled>Select Leave Type</option>
+              <option value="Privilege Leave">Privilege Leave (PL)</option>
+              <option value="Casual Leave">Casual Leave (CL)</option>
+              <option value="Sick Leave">Sick Leave (SL)</option>
+              <option value="Maternity Leave">Maternity Leave (ML)</option>
+              <option value="Marriage Leave">Marriage Leave</option>
+              <option value="Paternity Leave">Paternity Leave</option>
+              <option value="Bereavement Leave">Bereavement Leave</option>
+            </select>
+            <div class="validation-error" *ngIf="leaveType.touched || leaveType.dirty">
+              <span *ngIf="leaveType.errors?.['required']">Leave Type is required</span>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <label class="fw-bold">Reason of Leave</label>
+            <p-editor name="details" #details="ngModel" required [(ngModel)]="leaveObj.details"
+              placeholder="Enter Reason of Leave" [style]="{'height':'100px'}"></p-editor>
+            <div class="validation-error" *ngIf="details.touched || details.dirty">
+              <span *ngIf="details.errors?.['required']">Reason of Leave is required</span>
+            </div>
+          </div>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Reset"
+            (click)="onResetLeave()"></button>
+          <button pButton pRipple class="p-button-success p-button-sm" (click)="onCreateLeave()" label="Add Leave"
+            [disabled]="createLeaveFrm.invalid">
+            <span *ngIf="isApiCallInProgress" class="spinner-border spinner-border-sm me-2"></span>
+          </button>
+        </ng-template>
+      </p-dialog>
+    </form>
+  </div>
+</div>
+<!-- Create Leave Modal ends here -->
+
+<!-- Open leaves details Modal starts here -->
+<div class="row">
+  <div class="col-md-12">
+    <form #ticketForm="ngForm">
+      <p-dialog header="Leave Details" [(visible)]="displayModalLeaveDetails" [modal]="true" [style]="{width: '50vw'}"
+        [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+        <div class="row">
+          <div class="col-md-6">
+            <label class="fw-bold">Employee Name</label>
+            <input id="float-input" type="text" class="form-control" name="employeeName" #employeeName="ngModel"
+              required [(ngModel)]="leaveObj.employeeName" pInputText placeholder="Employee Name" disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold">Leave Type</label>
+            <input id="float-input" type="text" class="form-control" name="leaveType" #leaveType="ngModel" required
+              [(ngModel)]="leaveObj.leaveType" pInputText placeholder="Leave Type" disabled>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="fw-bold">FromDate</label>
+            <input id="float-input" type="text" class="form-control" name="fromDate" required
+              [ngModel]="leaveObj.fromDate | date: 'dd-MMM-yyyy' | na" (ngModelChange)="leaveObj.fromDate=$event"
+              pInputText placeholder="From Date" disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold">To Date</label>
+            <input id="float-input" type="text" class="form-control" name="toDate" required
+              [ngModel]="leaveObj.toDate | date: 'dd-MMM-yyyy' | na" (ngModelChange)="leaveObj.toDate=$event" pInputText
+              placeholder="To Date" disabled>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label class="fw-bold">No Of Days</label>
+            <input id="float-input" type="text" class="form-control" name="noOfDays" #noOfDays="ngModel" required
+              [(ngModel)]="leaveObj.noOfDays" pInputText [placeholder]="leaveObj.noOfDays == 0?'No Of Days':''"
+              disabled>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold">Approved Date</label>
+            <input id="float-input" type="text" class="form-control" name="approvedDate" required
+              [value]="leaveObj.approvedDate | date: 'dd-MM-yyyy'" pInputText
+              [placeholder]="leaveObj.approvedDate == null?'Not Approved Yet':'Approved Date'" disabled>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label class="fw-bold my-1">Leave Details</label>
+            <p-editor name="details" #details="ngModel" required [(ngModel)]="leaveObj.details"
+              [style]="{'height':'100px'}" placeholder="Leave Details" [readonly]="true"></p-editor>
+          </div>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple icon="pi pi-times" class="p-button-danger p-button-sm" label="Close"
+            (click)="closeLeaveDetails()"></button>
+        </ng-template>
+      </p-dialog>
+    </form>
+  </div>
+</div>
+<!-- Open leaves details Modal Ends here -->

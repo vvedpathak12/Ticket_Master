@@ -1,0 +1,9 @@
+.empCard{
+  cursor: pointer;
+}
+
+.empCard:hover{
+  transform: scale(1.0); /* Increase the size on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add a larger shadow on hover */
+  transition: 0.2s ease-in;
+}
