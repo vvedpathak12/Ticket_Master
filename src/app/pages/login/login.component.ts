@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { loginObject } from 'src/app/core/models/classes/classes';
 import { LoginService } from 'src/app/core/services/login.service';
 
@@ -10,18 +11,19 @@ import { LoginService } from 'src/app/core/services/login.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginObj: loginObject;
   isApiCallInProgress: boolean;
   showPassword: boolean;
   rememberMe: boolean;
+  subscription: Subscription[];
 
   constructor(private router: Router, private toastr: ToastrService, private _login: LoginService) {
     this.loginObj = new loginObject();
     this.isApiCallInProgress = false;
     this.showPassword = false;
     this.rememberMe = false;
-
+    this.subscription = [];
     const rememberLoginInfo = sessionStorage.getItem('rememberLogin');
     if (rememberLoginInfo != null) {
       this.loginObj = JSON.parse(rememberLoginInfo);
@@ -36,7 +38,7 @@ export class LoginComponent implements OnInit {
     if (loginFrm.valid) {
       if (!this.isApiCallInProgress) {
         this.isApiCallInProgress = true;
-        this._login.login(this.loginObj).subscribe((res: any) => {
+        const login = this._login.login(this.loginObj).subscribe((res: any) => {
           if (res.result) {
             this.isApiCallInProgress = false;
             sessionStorage.setItem('loginUserData', JSON.stringify(res.data));
@@ -67,6 +69,7 @@ export class LoginComponent implements OnInit {
           this.isApiCallInProgress = false;
           this.toastr.error('Wrong Credentials!!');
         });
+        this.subscription.push(login);
       }
     } else {
       Object.values(loginFrm.controls).forEach(control => {
@@ -77,5 +80,11 @@ export class LoginComponent implements OnInit {
 
   onEyeClick() {
     this.showPassword = !this.showPassword;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.forEach((ele: any) => {
+      ele.unsubscribe();
+    })
   }
 }

@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { adminEmployeeDashboardObject, deptHeadDashboardObject, employeeDashboardObject, superAdminDashboardObject } from 'src/app/core/models/classes/classes';
 import { DashboardService } from 'src/app/core/services/dashboard.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MasterService } from 'src/app/core/services/master.service';
-
-
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -18,13 +17,14 @@ import { MasterService } from 'src/app/core/services/master.service';
     ]),
   ],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   superAdminDashboardObj: superAdminDashboardObject;
   empDashboardObj: employeeDashboardObject;
   adminEmployeeDashboardObj: adminEmployeeDashboardObject;
   deptHeadDashboardObj: deptHeadDashboardObject;
   loggedInUserData: any;
   dashboardLoadCounter: number;
+  subscription: Subscription[];
 
   constructor(private _dashboardSrv: DashboardService, private _masterSrv: MasterService) {
     this.superAdminDashboardObj = new superAdminDashboardObject();
@@ -32,6 +32,7 @@ export class DashboardComponent implements OnInit {
     this.adminEmployeeDashboardObj = new adminEmployeeDashboardObject();
     this.deptHeadDashboardObj = new deptHeadDashboardObject();
     this.dashboardLoadCounter = 0;
+    this.subscription = [];
 
     let localData = sessionStorage.getItem('loginUserData');
     if (localData != null) {
@@ -60,37 +61,47 @@ export class DashboardComponent implements OnInit {
   loadSuperAdminDashboard() {
     // Increment the counter before making the API call
     this.dashboardLoadCounter++;
-    this._dashboardSrv.getSuperAdminDashboard().subscribe((res: any) => {
+    const getSuperAdminDashboard = this._dashboardSrv.getSuperAdminDashboard().subscribe((res: any) => {
       if (res.result) {
         this.superAdminDashboardObj = res.data;
       }
     });
+    this.subscription.push(getSuperAdminDashboard);
   }
 
   loadEmployeeDashboard() {
     this.dashboardLoadCounter++;
-    this._dashboardSrv.getEmployeeDashByEmpId(this.loggedInUserData.employeeId).subscribe((res: any) => {
+    const getEmployeeDashByEmpId = this._dashboardSrv.getEmployeeDashByEmpId(this.loggedInUserData.employeeId).subscribe((res: any) => {
       if (res.result) {
         this.empDashboardObj = res.data;
       }
     });
+    this.subscription.push(getEmployeeDashByEmpId);
   }
 
   loadAdminEmployeeDashboard() {
     this.dashboardLoadCounter++;
-    this._dashboardSrv.getAdminEmployeeDashByEmpId(this.loggedInUserData.employeeId).subscribe((res: any) => {
+    const getAdminEmployeeDashByEmpId = this._dashboardSrv.getAdminEmployeeDashByEmpId(this.loggedInUserData.employeeId).subscribe((res: any) => {
       if (res.result) {
         this.adminEmployeeDashboardObj = res.data;
       }
     });
+    this.subscription.push(getAdminEmployeeDashByEmpId);
   }
 
   loadDepartmentHeadDashboard() {
     this.dashboardLoadCounter++;
-    this._dashboardSrv.getDeptHeadDashboardByDeptHead(this.loggedInUserData.employeeId).subscribe((res: any) => {
+    const getDeptHeadDashboardByDeptHead = this._dashboardSrv.getDeptHeadDashboardByDeptHead(this.loggedInUserData.employeeId).subscribe((res: any) => {
       if (res.result) {
         this.deptHeadDashboardObj = res.data;
       }
+    });
+    this.subscription.push(getDeptHeadDashboardByDeptHead);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.forEach((ele: any) => {
+      ele.unsubscribe();
     });
   }
 }

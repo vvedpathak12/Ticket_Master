@@ -1,43 +1,80 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
-      <app-card [headerClass]="'bg-dark'" [headerTxt]="'Employee'" [showAddBtn]="true" [btnTxt]="'Add'"
-        (btnClick)="onAddEmp()">
-        <div class="row">
-          <div class="col-md-4 my-2" *ngFor="let emp of filteredEmpArr">
-            <app-card [cardHeight]="'150px'" [cardDesign]="'cardDesign'" [showActionBtn]="true"
-              [headerStyle]="'rgb(66, 66, 66)'" [iconClass]="'fa fa-user me-2'"
-              [headerTxt]="emp.employeeName | titlecase" [headerTxtClass]="'fw-bold'" (editBtnClick)="onEdit(emp)"
-              (deleteBtnClick)="onDelete(emp)">
-              <div class="row">
-                <div class="col-md-5">
-                  <i class="fa fa-phone me-2"></i>{{emp.contactNo}}
-                </div>
-                <div class="col-md-7">
-                  <i class="fa fa-envelope me-2"></i>{{emp.emailId}}
-                </div>
-              </div>
-              <div class="row mt-3">
-                <div class="col-md-5">
-                  <i class="fa fa-building me-2"></i>{{emp.deptName}}
-                </div>
-                <div class="col-md-7">
-                  <i class="fa fa-user-secret me-2"></i>{{emp.role}}
-                </div>
-              </div>
-            </app-card>
-          </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button pButton pRipple type="button" class="p-button-primary addEmpBtn" (click)="onAddEmp()">Employee
+            Management
+            <i class="pi pi-plus ms-2 fw-bold"></i></button>
         </div>
-      </app-card>
+      </div>
+      <div class="row">
+        <ng-container *ngIf="filteredEmpArr.length !== 0">
+          <div class="col-md-4 my-3" *ngFor="let emp of filteredEmpArr.slice(first, first + rows)">
+            <div class="card empCard">
+              <div class="card-header empCardHeader">
+                <div class="row">
+                  <div class="col-md-2 col-lg-2 mt-3">
+                    <ngx-avatar [name]="emp.employeeName" [round]="false"
+                      [style]="{'height':'60px','width':'60px','font': '28px / 50px Helvetica, Arial, sans-serif'}"></ngx-avatar>
+                  </div>
+                  <div class="col-md-7 col-lg-7 ps-3">
+                    <div class="d-flex">
+                      <h4 class="fw-bold empName">{{emp.employeeName | titlecase}}</h4>
+                    </div>
+                    <span>(He/She)</span>
+                    <p>{{emp.role | titlecase | na}}</p>
+                  </div>
+                  <div class="col-md-3 col-lg-3">
+                    <i class="pi pi-arrow-circle-right editEmpIcon me-4" (click)="onEdit(emp)"></i>
+                    <i class="pi pi-trash deleteEmpIcon" (click)="onDelete(emp)"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="d-flex">
+                      <i class="fa fa-building empIcon me-3"></i>
+                      <span class="empIconTxt">{{emp.deptName | titlecase}}</span>
+                    </div>
+                    <div class="d-flex mt-2">
+                      <i class="fa fa-paper-plane empIcon me-3"></i>
+                      <span class="empIconTxt">{{emp.emailId}}</span>
+                    </div>
+                    <div class="d-flex mt-2">
+                      <i class="fa fa-phone empIcon me-3"></i>
+                      <span class="empIconTxt">{{emp.contactNo}}</span>
+                    </div>
+                    <div class="d-flex mt-2">
+                      <i class="fa fa-user-secret empIcon me-3"></i>
+                      <span class="empIconTxt">{{emp.role | titlecase | na}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p-paginator [first]="first" [rows]="rows" [totalRecords]="filteredEmpArr.length"
+            (onPageChange)="onPageChange($event)" [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
+        </ng-container>
+        <ng-container *ngIf="filteredEmpArr.length == 0">
+          <div class="text-center">
+            <span class="text-center text-success fw-bold" [ngStyle]="{'font-size':'18px'}">No Employees Record
+              Found</span>
+            <i class="pi pi-times-circle ms-2 text-danger" aria-hidden="true"></i>
+          </div>
+        </ng-container>
+      </div>
     </div>
 
     <!-- modal starts -->
     <div class="row">
       <div class="col-md-12">
         <form #empForm="ngForm">
-          <p-dialog header="Add Employee" [(visible)]="displayModalEmp" [modal]="true" [style]="{width: '50vw'}"
-            [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000" [draggable]="false"
-            [resizable]="false">
+          <p-dialog [header]="empObj.employeeId == 0 ? 'Add Employee':'Update Employee Details'" [(visible)]="displayModalEmp"
+            [modal]="true" [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw', '640px': '95vw'}"
+            [baseZIndex]="10000" [draggable]="false" [resizable]="false">
             <div class="row">
               <div class="col-md-6">
                 <label class="fw-bold my-1">Employee Name</label>

@@ -1,9 +1,72 @@
-.empCard{
+.empCard:hover {
+  transform: scale(1.0);
+  /* Increase the size on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  /* Add a larger shadow on hover */
+  transition: 0.2s ease-in;
+}
+
+.empCard {
+  border-color: #E2E2E2;
+  border-radius: 15px;
+}
+
+.empCardHeader {
+  background: #EBECF0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom: 0;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.empCardHeader h4 {
+  color: #083E4F;
+  font-weight: 600;
+  margin-bottom: 0;
+  margin-top: 10px;
+}
+
+.empCardHeader span {
+  color: #083E4F;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.empCardHeader p {
+  color: #083E4F;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.empIcon {
+  color: #868B93;
+  margin-top: 5px;
+  font-size: 19px;
+}
+
+.editEmpIcon {
+  font-size: 21px;
+  margin-top: 18px;
+  color: rgb(255, 145, 0);
   cursor: pointer;
 }
 
-.empCard:hover{
-  transform: scale(1.0); /* Increase the size on hover */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add a larger shadow on hover */
-  transition: 0.2s ease-in;
+.deleteEmpIcon {
+  font-size: 21px;
+  margin-top: 18px;
+  color: rgb(255, 8, 0);
+  cursor: pointer;
 }
+
+.empIconTxt {
+  color: #274D50;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.addEmpBtn{
+  padding: 7px 10px 10px 7px !important;
+  font-weight: 500;
+}
+

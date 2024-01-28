@@ -1,22 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 import { leaveObject } from 'src/app/core/models/classes/classes';
 import { ILeaves } from 'src/app/core/models/interfaces/IUser';
 import { LeavesService } from 'src/app/core/services/leaves.service';
 import { MasterService } from 'src/app/core/services/master.service';
-
 @Component({
   selector: 'app-leaves',
   templateUrl: './leaves.component.html',
   styleUrls: ['./leaves.component.css'],
 })
-export class LeavesComponent implements OnInit {
-  @ViewChild('createLeaveFrm') createLeaveFrm!:NgForm;
+export class LeavesComponent implements OnInit, OnDestroy {
+  @ViewChild('createLeaveFrm') createLeaveFrm!: NgForm;
   leaveObj: leaveObject;
   leavesArr: ILeaves[];
+  filteredLeavesArr: ILeaves[];
   todaysDate: Date = new Date();
   displayModalLeaveDetails: boolean;
   displayModalCreateLeave: boolean;
@@ -25,11 +26,17 @@ export class LeavesComponent implements OnInit {
   isApiCallInProgressApprove: boolean;
   isApiCallInProgressDeny: boolean;
   pendingLeavesCount: number;
-
+  filteredPendingLeavesArr: ILeaves[];
+  showPendingLeaves: boolean;
+  items: any[];
+  first: number;
+  rows: number;
+  subscription: Subscription[];
 
   constructor(private _masterSrv: MasterService, private _leaveSrv: LeavesService, private router: Router, private toastr: ToastrService, private confirm: ConfirmationService) {
     this.leaveObj = new leaveObject();
     this.leavesArr = [];
+    this.filteredLeavesArr = [];
     let localData = sessionStorage.getItem('loginUserData');
     if (localData != null) {
       this.loggedInUserData = JSON.parse(localData);
@@ -41,11 +48,40 @@ export class LeavesComponent implements OnInit {
     this.isApiCallInProgressApprove = false;
     this.isApiCallInProgressDeny = false;
     this.pendingLeavesCount = this.leavesArr.length;
+    this.filteredPendingLeavesArr = [];
+    this.showPendingLeaves = false;
+    this.items = [];
+    this.first = 0;
+    this.rows = 6;
+    this.subscription = [];
     this._masterSrv.showLoader.next(false);
+    this._masterSrv.setShowSearch(true);
+    this._masterSrv.search.subscribe((res: any) => {
+      this.filteredLeavesArr = this.leavesArr.filter((searchData: any) => {
+        let search = res.toLowerCase();
+        const values = Object.values(searchData);
+        let flag = false;
+        for (let val of values) {
+          if (val !== null && (val as string).toString().toLowerCase().indexOf(search) > -1) {
+            flag = true;
+            break;
+          }
+        }
+        return flag;
+      });
+    });
   }
 
   ngOnInit(): void {
     this.loadLeavesByRoles();
+    this.items = [
+      {
+        label: 'Show All Leaves', icon: 'pi pi-refresh', command: () => {
+          this.showPendingLeaves = false;
+          this.loadLeavesByRoles();
+        }
+      }
+    ];
   }
 
   loadLeavesByRoles() {
@@ -60,46 +96,57 @@ export class LeavesComponent implements OnInit {
     }
   }
 
+  onPageChange(event: any) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
+
   loadAllLeaves() {
     this._masterSrv.showLoader.next(true);
-    this._leaveSrv.getAllLeaves().subscribe((res: any) => {
+    const getAllLeaves = this._leaveSrv.getAllLeaves().subscribe((res: any) => {
       if (res.result) {
         this._masterSrv.showLoader.next(false);
         this.leavesArr = res.data;
+        this.filteredLeavesArr = res.data;
       } else {
         this._masterSrv.showLoader.next(false);
       }
     }, (err: any) => {
       this._masterSrv.showLoader.next(false);
     });
+    this.subscription.push(getAllLeaves);
   }
 
   loadAllLeavesByEmployeeId() {
     this._masterSrv.showLoader.next(true);
-    this._leaveSrv.getAllLeavesByEmployeeId(this.loggedInUserData.employeeId).subscribe((res: any) => {
+    const getAllLeavesByEmployeeId = this._leaveSrv.getAllLeavesByEmployeeId(this.loggedInUserData.employeeId).subscribe((res: any) => {
       if (res.result) {
         this._masterSrv.showLoader.next(false);
         this.leavesArr = res.data;
+        this.filteredLeavesArr = res.data;
       } else {
         this._masterSrv.showLoader.next(false);
       }
     }, (err: any) => {
       this._masterSrv.showLoader.next(false);
     });
+    this.subscription.push(getAllLeavesByEmployeeId);
   }
 
   loadLeavesForApprovalBySuperwiserId() {
     this._masterSrv.showLoader.next(true);
-    this._leaveSrv.getLeavesForApprovalBySuperwiserId(this.loggedInUserData.employeeId).subscribe((res: any) => {
+    const getLeavesForApprovalBySuperwiserId = this._leaveSrv.getLeavesForApprovalBySuperwiserId(this.loggedInUserData.employeeId).subscribe((res: any) => {
       if (res.result) {
         this._masterSrv.showLoader.next(false);
         this.leavesArr = res.data;
+        this.filteredLeavesArr = res.data;
       } else {
         this._masterSrv.showLoader.next(false);
       }
     }, (err: any) => {
       this._masterSrv.showLoader.next(false);
     });
+    this.subscription.push(getLeavesForApprovalBySuperwiserId);
   }
 
   openLeaveDetails(leaves: leaveObject) {
@@ -116,15 +163,11 @@ export class LeavesComponent implements OnInit {
     this.leaveObj = new leaveObject();
   }
 
-  getPendingLeavesCount() {
-    return this.leavesArr.filter((count: any) => count.approvedDate == null).length;
-  }
-
   onCreateLeave() {
     if (!this.isApiCallInProgress) {
       this.isApiCallInProgress = true;
       this.leaveObj.employeeId = this.loggedInUserData.employeeId;
-      this._leaveSrv.addLeave(this.leaveObj).subscribe((res: any) => {
+      const addLeave = this._leaveSrv.addLeave(this.leaveObj).subscribe((res: any) => {
         if (res.result) {
           this.isApiCallInProgress = false;
           this.toastr.success('Applied For Leave Successfully');
@@ -138,7 +181,62 @@ export class LeavesComponent implements OnInit {
         this.isApiCallInProgress = false;
         this.toastr.success(err.message);
       });
+      this.subscription.push(addLeave);
     }
+  }
+
+  // approveLeave(leaveId: number) {
+  //   this.confirm.confirm({
+  //     message: 'Are you sure that you want to approve this leave request?',
+  //     accept: () => {
+  //       if (!this.isApiCallInProgressApprove) {
+  //         this.isApiCallInProgressApprove = true;
+  //         const approveLeave = this._leaveSrv.approveLeave(leaveId).subscribe((res: any) => {
+  //           if (res.result) {
+  //             this.isApiCallInProgressApprove = false;
+  //             this.toastr.success(res.message);
+  //             this.loadLeavesByRoles();
+  //           } else {
+  //             this.isApiCallInProgressApprove = false;
+  //             this.toastr.error(res.message);
+  //           }
+  //         }, (err: any) => {
+  //           this.isApiCallInProgressApprove = false;
+  //           this.toastr.error(err.message);
+  //         });
+  //           this.subscription.push(approveLeave);
+  //       }
+  //     }
+  //   });
+  // }
+
+  // denyLeave(leaveId: number) {
+  //   this.confirm.confirm({
+  //     message: 'Are you sure that you want to reject this leave request?',
+  //     accept: () => {
+  //       if (!this.isApiCallInProgressDeny) {
+  //         this.isApiCallInProgressDeny = true;
+  //         const rejectLeave = this._leaveSrv.rejectLeave(leaveId).subscribe((res: any) => {
+  //           if (res.result) {
+  //             this.isApiCallInProgressDeny = false;
+  //             this.toastr.error(res.message);
+  //             this.loadLeavesByRoles();
+  //           } else {
+  //             this.isApiCallInProgressDeny = false;
+  //             this.toastr.error(res.message);
+  //           }
+  //         }, (err: any) => {
+  //           this.isApiCallInProgressDeny = false;
+  //           this.toastr.error(err.message);
+  //         });
+  //           this.subscription.push(rejectLeave);
+  //       }
+  //     }
+  //   });
+  // }
+
+  getPendingLeavesCount() {
+    return this.filteredLeavesArr.filter((count: any) => count.approvedDate == null).length;
   }
 
   approveLeave(leaveId: number) {
@@ -147,12 +245,21 @@ export class LeavesComponent implements OnInit {
       accept: () => {
         if (!this.isApiCallInProgressApprove) {
           this.isApiCallInProgressApprove = true;
-          this._leaveSrv.approveLeave(leaveId).subscribe((res: any) => {
+          const approveLeave = this._leaveSrv.approveLeave(leaveId).subscribe((res: any) => {
             if (res.result) {
-              debugger
               this.isApiCallInProgressApprove = false;
               this.toastr.success(res.message);
-              this.loadLeavesByRoles();
+              if (this.showPendingLeaves) {
+                // Update the leavesArr to reflect the approved leave
+                const approvedLeaveIndex = this.filteredLeavesArr.findIndex(leave => leave.leaveId === leaveId);
+                if (approvedLeaveIndex !== -1) {
+                  this.filteredLeavesArr[approvedLeaveIndex].isApproved = true;
+                }
+              } else {
+                this.loadLeavesByRoles();
+              }
+              // Update the filteredPendingLeavesArr
+              this.filteredPendingLeavesArr = this.filteredLeavesArr.filter(leave => leave.isApproved === null);
             } else {
               this.isApiCallInProgressApprove = false;
               this.toastr.error(res.message);
@@ -161,6 +268,7 @@ export class LeavesComponent implements OnInit {
             this.isApiCallInProgressApprove = false;
             this.toastr.error(err.message);
           });
+          this.subscription.push(approveLeave);
         }
       }
     });
@@ -168,15 +276,25 @@ export class LeavesComponent implements OnInit {
 
   denyLeave(leaveId: number) {
     this.confirm.confirm({
-      message: 'Are you sure that you want to reject this leave request?',
+      message: 'Are you sure that you want to approve this leave request?',
       accept: () => {
         if (!this.isApiCallInProgressDeny) {
           this.isApiCallInProgressDeny = true;
-          this._leaveSrv.rejectLeave(leaveId).subscribe((res: any) => {
+          const rejectLeave = this._leaveSrv.rejectLeave(leaveId).subscribe((res: any) => {
             if (res.result) {
               this.isApiCallInProgressDeny = false;
               this.toastr.error(res.message);
-              this.loadLeavesByRoles();
+              if (this.showPendingLeaves) {
+                // Update the leavesArr to reflect the approved leave
+                const rejectedLeaveIndex = this.filteredLeavesArr.findIndex((leave) => leave.leaveId === leaveId);
+                if (rejectedLeaveIndex !== -1) {
+                  this.filteredLeavesArr[rejectedLeaveIndex].isApproved = true;
+                }
+              } else {
+                this.loadLeavesByRoles();
+              }
+              // Update the filteredPendingLeavesArr
+              this.filteredPendingLeavesArr = this.filteredLeavesArr.filter(leave => leave.isApproved === null);
             } else {
               this.isApiCallInProgressDeny = false;
               this.toastr.error(res.message);
@@ -185,9 +303,15 @@ export class LeavesComponent implements OnInit {
             this.isApiCallInProgressDeny = false;
             this.toastr.error(err.message);
           });
+          this.subscription.push(rejectLeave);
         }
       }
     });
+  }
+
+  filterPendingLeaves() {
+    this.showPendingLeaves = true;
+    this.filteredPendingLeavesArr = this.filteredLeavesArr.filter(leave => leave.isApproved === null);
   }
 
   onDateChange() {
@@ -243,6 +367,12 @@ export class LeavesComponent implements OnInit {
   onResetLeave() {
     this.createLeaveFrm.resetForm();
     this.displayModalCreateLeave = false;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.forEach((ele: any) => {
+      ele.unsubscribe();
+    });
   }
 
 }

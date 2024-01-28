@@ -1,20 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { createUpdateEmpObject } from 'src/app/core/models/classes/classes';
 import { IDepartment, IEmployee } from 'src/app/core/models/interfaces/IUser';
 import { DepartmentService } from 'src/app/core/services/department.service';
 import { EmployeeService } from 'src/app/core/services/employee.service';
 import { MasterService } from 'src/app/core/services/master.service';
-
 @Component({
   selector: 'app-employee',
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.css']
 })
-export class EmployeeComponent implements OnInit {
+export class EmployeeComponent implements OnInit, OnDestroy {
   @ViewChild('empForm') empForm!: NgForm;
   empArr: IEmployee[];
   filteredEmpArr: IEmployee[];
@@ -25,6 +24,9 @@ export class EmployeeComponent implements OnInit {
   displayModalEmp: boolean;
   emailPattern: string;
   contactPattern: string;
+  first: number;
+  rows: number;
+  subscription: Subscription[];
 
   constructor(private _empSrv: EmployeeService, private toastr: ToastrService, private _departmentSrv: DepartmentService, private confirm: ConfirmationService, private _masterSrv: MasterService) {
     this.empArr = [];
@@ -36,6 +38,9 @@ export class EmployeeComponent implements OnInit {
     this.displayModalEmp = false;
     this.emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
     this.contactPattern = "^((\\+91-?)|0)?[0-9]{10}$";
+    this.first = 0;
+    this.rows = 12;
+    this.subscription = [];
     this._masterSrv.search.subscribe((res: any) => {
       this.filteredEmpArr = this.empArr.filter((searchData: any) => {
         let search = res.toLowerCase();
@@ -61,7 +66,7 @@ export class EmployeeComponent implements OnInit {
 
   loadAllEmployee() {
     this._masterSrv.showLoader.next(true);
-    this._empSrv.getAllEmployees().subscribe((res: any) => {
+    const getAllEmployees = this._empSrv.getAllEmployees().subscribe((res: any) => {
       if (res) {
         this._masterSrv.showLoader.next(false);
         this.empArr = res;
@@ -72,6 +77,7 @@ export class EmployeeComponent implements OnInit {
     }, (err: any) => {
       this._masterSrv.showLoader.next(false);
     });
+    this.subscription.push(getAllEmployees);
   }
 
   onAddEmp() {
@@ -83,7 +89,7 @@ export class EmployeeComponent implements OnInit {
   onSaveEmp() {
     if (!this.isApiCallInProgress) {
       this.isApiCallInProgress = true;
-      this._empSrv.createEmployee(this.empObj).subscribe((res: any) => {
+      const createEmployee = this._empSrv.createEmployee(this.empObj).subscribe((res: any) => {
         if (res.result) {
           this.isApiCallInProgress = false;
           this.loadAllEmployee();
@@ -98,22 +104,24 @@ export class EmployeeComponent implements OnInit {
         this.isApiCallInProgress = false;
         this.toastr.error(err.message);
       });
+      this.subscription.push(createEmployee);
     }
   }
 
   onEdit(item: createUpdateEmpObject) {
-    this._empSrv.getEmployeeById(item.employeeId).subscribe((res: any) => {
+    const getEmployeeById = this._empSrv.getEmployeeById(item.employeeId).subscribe((res: any) => {
       if (res.result) {
         this.empObj = res.data;
         this.displayModalEmp = true;
       }
     });
+    this.subscription.push(getEmployeeById);
   }
 
   onUpdateEmp() {
     if (!this.isApiCallInProgress) {
       this.isApiCallInProgress = true;
-      this._empSrv.updateEmployee(this.empObj).subscribe((res: any) => {
+      const updateEmployee = this._empSrv.updateEmployee(this.empObj).subscribe((res: any) => {
         if (res.result) {
           this.isApiCallInProgress = false;
           this.loadAllEmployee();
@@ -128,6 +136,7 @@ export class EmployeeComponent implements OnInit {
         this.isApiCallInProgress = false;
         this.toastr.error(err.message);
       });
+      this.subscription.push(updateEmployee);
     }
   }
 
@@ -135,13 +144,14 @@ export class EmployeeComponent implements OnInit {
     this.confirm.confirm({
       message: 'Are you sure that you want delete?',
       accept: () => {
-        this._empSrv.deleteEmployee(item.employeeId).subscribe((res: any) => {
+        const deleteEmployee = this._empSrv.deleteEmployee(item.employeeId).subscribe((res: any) => {
           if (res.result) {
             const index = this.filteredEmpArr.findIndex((m: any) => m.employeeId == item.employeeId);
             this.filteredEmpArr.splice(index, 1);
             this.toastr.error('Employee Record Deleted Successfully!!');
           }
         });
+        this.subscription.push(deleteEmployee);
       }
     });
   }
@@ -154,4 +164,18 @@ export class EmployeeComponent implements OnInit {
     this.displayModalEmp = false;
   }
 
+  onPageChange(event: any) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
+
+  refresh() {
+    this.loadAllEmployee();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.forEach((ele: any) => {
+      ele.unsubscribe();
+    });
+  }
 }

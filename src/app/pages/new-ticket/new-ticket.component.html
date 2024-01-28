@@ -5,10 +5,8 @@
         (btnClick)="addNewTicket()">
         <div class="row">
           <div class="col-md-12">
-            <p-table [value]="filteredTicketArr" [paginator]="true" [rows]="10"
-              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-              [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50,75,100,150]"
-              styleClass="p-datatable-gridlines p-datatable-sm" [responsive]="true">
+            <p-table [value]="filteredTicketArr" [paginator]="true" [rows]="10" [showJumpToPageDropdown]="true"
+              [showPageLinks]="false" styleClass="p-datatable-gridlines p-datatable-sm" [responsive]="true">
               <ng-template pTemplate="header">
                 <tr class="button-cell">
                   <th style="width: 3%;">Sr</th>
@@ -165,9 +163,9 @@
             <div class="col-md-6">
               <label class="fw-bold my-1">Select Department</label>
               <p-dropdown id="float-input" name="deptName" #deptName="ngModel" [required]="true"
-                [options]="($department | async)!" [(ngModel)]="ticketObj.deptId" optionLabel="deptName" optionValue="deptId"
-                [filter]="true" filterBy="deptName" [showClear]="ticketObj.deptId !== 0" placeholder="Select Department"
-                [editable]="true" [style]="{'width':'100%'}" [appendTo]="'body'">
+                [options]="($department | async)!" [(ngModel)]="ticketObj.deptId" optionLabel="deptName"
+                optionValue="deptId" [filter]="true" filterBy="deptName" [showClear]="ticketObj.deptId !== 0"
+                placeholder="Select Department" [editable]="true" [style]="{'width':'100%'}" [appendTo]="'body'">
               </p-dropdown>
               <div class="validation-error" *ngIf="deptName.touched || deptName.dirty">
                 <span *ngIf="deptName.errors?.['required']">This field is required</span>

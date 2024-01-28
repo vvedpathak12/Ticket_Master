@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MasterService } from 'src/app/core/services/master.service';
-
 @Component({
   selector: 'app-loader',
   templateUrl: './loader.component.html',

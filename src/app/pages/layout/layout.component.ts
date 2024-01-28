@@ -1,10 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { ConfirmationService } from 'primeng/api';
-import { LoginService } from 'src/app/core/services/login.service';
-import { MasterService } from 'src/app/core/services/master.service';
-
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -25,4 +19,5 @@ export class LayoutComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
 }

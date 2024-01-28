@@ -37,6 +37,8 @@ import { NaPipe } from './shared/pipes/na.pipe';
 import { MoreLessComponent } from './shared/components/more-less/more-less.component';
 import { LeavesComponent } from './pages/leaves/leaves.component';
 import { AvatarModule } from 'ngx-avatar';
+import {SplitButtonModule} from 'primeng/splitbutton';
+import {PaginatorModule} from 'primeng/paginator';
 @NgModule({
   declarations: [
     AppComponent,
@@ -77,7 +79,9 @@ import { AvatarModule } from 'ngx-avatar';
     EditorModule,
     TooltipModule,
     BadgeModule,
-    AvatarModule
+    AvatarModule,
+    SplitButtonModule,
+    PaginatorModule
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6">
       <h4 class="mb-0">Leave Management</h4>
-      <span class="ps-1" [ngStyle]="{'font-size':'14px','font-weight':'500'}">{{todaysDate | date:'MMMM dd, yyyy'}}</span>
+      <span class="ps-1" [ngStyle]="{'font-size':'14px','font-weight':'500'}">{{todaysDate| date:'MMMM dd, yyyy'}}</span>
     </div>
     <div class="col-12 col-md-6 col-lg-6 col-xxl-6 text-center mt-3 mt-md-0 text-md-end">
       <button pButton pRipple type="button" label="Create" icon="pi pi-plus"
@@ -14,84 +14,168 @@
     <div class="col-md-12">
       <ng-container *ngIf="leavesArr.length !== 0">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-8">
             <div class="d-flex">
               <h4>Leave Approval</h4>
               <p-badge [value]="getPendingLeavesCount().toString()"></p-badge><small class="pendingLeaves"
                 [ngStyle]="{'font-size':'13px'}">Pending</small>
             </div>
           </div>
+          <div class="col-md-4 text-end">
+            <!-- <button pButton pRipple type="button" class="p-button-sm p-button-warning fw-bold" (click)="filterPendingLeaves()">Pending Leaves</button> -->
+            <p-splitButton label="Pending Leaves" (onClick)="filterPendingLeaves()" [model]="items"
+              styleClass="p-button-warning p-button-sm mb-2 mr-2"></p-splitButton>
+          </div>
         </div>
         <div class="row mt-2">
-          <div class="col-md-6 mb-4 col-12" *ngFor="let leaves of leavesArr">
-            <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
-              <div class="row">
-                <div class="col-md-1 col-12 col-lg-1">
-                  <ngx-avatar [name]="leaves.employeeName"></ngx-avatar>
-                </div>
-                <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
-                  <span class="empName">{{leaves.employeeName | titlecase}}</span>
-                  <h6 class="empId">{{'20' + leaves.employeeId}}</h6>
-                </div>
-                <div class="col-md-3 col-lg-4 text-center">
-                  <span class="details">{{leaves.leaveType | titlecase}}</span>
-                </div>
-                <div class="col-md-2 col-lg-2">
-                  <span class="details">{{leaves.noOfDays}} days</span>
-                </div>
-              </div>
-              <div class="row mt-2">
-                <div class="col-md-6 col-lg-6">
-                  <h4 class="fw-bold innerHTML" [innerHTML]="leaves.details" style="margin-bottom: 0 !important;"></h4>
-                  <p class="pt-1 leaveDate">{{leaves.fromDate | date:'dd MMMM'}} - {{leaves.toDate | date:'dd MMMM'}}
-                  </p>
-                </div>
-                <ng-container
-                  *ngIf="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate == null">
-                  <div class="col-md-2 buttonCell">
-                    <button class="btn btn-sm denyBtn mt-3" (click)="denyLeave(leaves.leaveId)">Deny <i
-                        *ngIf="isApiCallInProgressDeny" class="fa fa-spin fa-spinner"></i></button>
+          <ng-container *ngIf="!showPendingLeaves">
+            <div class="col-md-6 mb-4 col-12" *ngFor="let leaves of filteredLeavesArr.slice(first, first + rows)">
+              <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
+                <div class="row">
+                  <div class="col-md-1 col-12 col-lg-1">
+                    <ngx-avatar [name]="leaves.employeeName"></ngx-avatar>
                   </div>
-                  <div class="col-md-2 buttonCell">
-                    <button class="btn btn-sm approveBtn mt-3" (click)="approveLeave(leaves.leaveId)">Approve <i
-                        *ngIf="isApiCallInProgressApprove" class="fa fa-spin fa-spinner"></i></button>
+                  <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
+                    <span class="empName">{{leaves.employeeName | titlecase}}</span>
+                    <h6 class="empId">{{'20' + leaves.employeeId}}</h6>
                   </div>
-                </ng-container>
-                <ng-container
-                  *ngIf="loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head'">
-                  <div class="col-md-2" [ngClass]="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate !== null?'col-md-6 col-lg-6 text-end':'col-md-2'">
-                    <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
-                      *ngIf="leaves.isApproved == true">Approved</button>
-                    <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
-                      *ngIf="leaves.isApproved == false">Rejected</button>
-                    <button class="btn btn-sm detailBtn mt-3 fw-bold border-0"
-                      (click)="openLeaveDetails(leaves)">Detail</button>
+                  <div class="col-md-3 col-lg-4 text-center">
+                    <span class="details">{{leaves.leaveType | titlecase}}</span>
                   </div>
-                </ng-container>
-                <ng-container
-                  *ngIf="loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee'">
-                  <div class="col-md-2"
-                    [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'col-md-6 text-end':'col-md-2'">
-                    <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
-                      *ngIf="leaves.isApproved == true">Approved</button>
-                    <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
-                      *ngIf="leaves.isApproved == false">Rejected</button>
+                  <div class="col-md-2 col-lg-2">
+                    <span class="details">{{leaves.noOfDays}} days</span>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-md-6 col-lg-6">
+                    <h4 class="fw-bold innerHTML" [innerHTML]="leaves.details" style="margin-bottom: 0 !important;">
+                    </h4>
+                    <p class="pt-1 leaveDate">{{leaves.fromDate | date:'dd MMMM'}} - {{leaves.toDate | date:'dd MMMM'}}
+                    </p>
+                  </div>
+                  <ng-container
+                    *ngIf="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate == null">
+                    <div class="col-md-2 buttonCell">
+                      <button class="btn btn-sm denyBtn mt-3" (click)="denyLeave(leaves.leaveId)">Deny <i
+                          *ngIf="isApiCallInProgressDeny" class="fa fa-spin fa-spinner"></i></button>
+                    </div>
+                    <div class="col-md-2 buttonCell">
+                      <button class="btn btn-sm approveBtn mt-3" (click)="approveLeave(leaves.leaveId)">Approve <i
+                          *ngIf="isApiCallInProgressApprove" class="fa fa-spin fa-spinner"></i></button>
+                    </div>
+                  </ng-container>
+                  <ng-container
+                    *ngIf="loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head'">
+                    <div class="col-md-2"
+                      [ngClass]="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate !== null?'col-md-6 col-lg-6 text-end':'col-md-2'">
+                      <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == true">Approved</button>
+                      <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == false">Rejected</button>
+                      <button class="btn btn-sm detailBtn mt-3 fw-bold border-0"
+                        (click)="openLeaveDetails(leaves)">Detail</button>
+                    </div>
+                  </ng-container>
+                  <ng-container
+                    *ngIf="loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee'">
+                    <div class="col-md-2"
+                      [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'col-md-6 text-end':'col-md-2'">
+                      <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == true">Approved</button>
+                      <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == false">Rejected</button>
                       <button class="btn btn-sm pendingBtn mt-3 me-3 fw-bold"
-                      *ngIf="leaves.isApproved == null">Pending</button>
-                    <button class="btn btn-sm mt-3 fw-bold border-0"
-                      [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'detailBtnEmp me-5':''"
-                      (click)="openLeaveDetails(leaves)">Detail</button>
+                        *ngIf="leaves.isApproved == null">Pending</button>
+                      <button class="btn btn-sm mt-3 fw-bold border-0"
+                        [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'detailBtnEmp me-5':''"
+                        (click)="openLeaveDetails(leaves)">Detail</button>
+                    </div>
+                  </ng-container>
+                </div>
+              </app-card>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="leavesArr.length"
+            (onPageChange)="onPageChange($event)" [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
+          </ng-container>
+          <ng-container *ngIf="showPendingLeaves">
+            <div class="col-md-6 mb-4 col-12" *ngFor="let leaves of filteredPendingLeavesArr">
+              <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
+                <div class="row">
+                  <div class="col-md-1 col-12 col-lg-1">
+                    <ngx-avatar [name]="leaves.employeeName"></ngx-avatar>
                   </div>
-                </ng-container>
-              </div>
-            </app-card>
-          </div>
+                  <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
+                    <span class="empName">{{leaves.employeeName | titlecase}}</span>
+                    <h6 class="empId">{{'20' + leaves.employeeId}}</h6>
+                  </div>
+                  <div class="col-md-3 col-lg-4 text-center">
+                    <span class="details">{{leaves.leaveType | titlecase}}</span>
+                  </div>
+                  <div class="col-md-2 col-lg-2">
+                    <span class="details">{{leaves.noOfDays}} days</span>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-md-6 col-lg-6">
+                    <h4 class="fw-bold innerHTML" [innerHTML]="leaves.details" style="margin-bottom: 0 !important;">
+                    </h4>
+                    <p class="pt-1 leaveDate">{{leaves.fromDate | date:'dd MMMM'}} - {{leaves.toDate | date:'dd MMMM'}}
+                    </p>
+                  </div>
+                  <ng-container
+                    *ngIf="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate == null">
+                    <div class="col-md-2 buttonCell">
+                      <button class="btn btn-sm denyBtn mt-3" (click)="denyLeave(leaves.leaveId)">Deny <i
+                          *ngIf="isApiCallInProgressDeny" class="fa fa-spin fa-spinner"></i></button>
+                    </div>
+                    <div class="col-md-2 buttonCell">
+                      <button class="btn btn-sm approveBtn mt-3" (click)="approveLeave(leaves.leaveId)">Approve <i
+                          *ngIf="isApiCallInProgressApprove" class="fa fa-spin fa-spinner"></i></button>
+                    </div>
+                  </ng-container>
+                  <ng-container
+                    *ngIf="loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head'">
+                    <div class="col-md-2"
+                      [ngClass]="(loggedInUserData.role == 'Super Admin' || loggedInUserData.role == 'Department Head') && leaves.approvedDate !== null?'col-md-6 col-lg-6 text-end':'col-md-2'">
+                      <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == true">Approved</button>
+                      <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == false">Rejected</button>
+                      <button class="btn btn-sm detailBtn mt-3 fw-bold border-0"
+                        (click)="openLeaveDetails(leaves)">Detail</button>
+                    </div>
+                  </ng-container>
+                  <ng-container
+                    *ngIf="loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee'">
+                    <div class="col-md-2"
+                      [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'col-md-6 text-end':'col-md-2'">
+                      <button class="btn btn-sm approvedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == true">Approved</button>
+                      <button class="btn btn-sm rejectedBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == false">Rejected</button>
+                      <button class="btn btn-sm pendingBtn mt-3 me-3 fw-bold"
+                        *ngIf="leaves.isApproved == null">Pending</button>
+                      <button class="btn btn-sm mt-3 fw-bold border-0"
+                        [ngClass]="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Admin Department Employee')?'detailBtnEmp me-5':''"
+                        (click)="openLeaveDetails(leaves)">Detail</button>
+                    </div>
+                  </ng-container>
+                </div>
+              </app-card>
+            </div>
+          </ng-container>
         </div>
       </ng-container>
       <ng-container *ngIf="leavesArr.length == 0">
         <div class="text-center">
           <span class="text-center text-success fw-bold" [ngStyle]="{'font-size':'18px'}">No Pending Leaves For
             Approval</span>
+          <i class="pi pi-times-circle ms-2 text-danger" aria-hidden="true"></i>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="filteredPendingLeavesArr.length == 0 && showPendingLeaves">
+        <div class="text-center">
+          <span class="text-center text-success fw-bold" [ngStyle]="{'font-size':'18px'}">No Pending Leaves</span>
           <i class="pi pi-times-circle ms-2 text-danger" aria-hidden="true"></i>
         </div>
       </ng-container>

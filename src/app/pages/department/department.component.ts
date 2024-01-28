@@ -1,21 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { createUpdateDepartment } from 'src/app/core/models/classes/classes';
 import { IEmployee, IDepartment } from 'src/app/core/models/interfaces/IUser';
 import { DepartmentService } from 'src/app/core/services/department.service';
 import { EmployeeService } from 'src/app/core/services/employee.service';
-import { LoginService } from 'src/app/core/services/login.service';
 import { MasterService } from 'src/app/core/services/master.service';
-
 @Component({
   selector: 'app-department',
   templateUrl: './department.component.html',
   styleUrls: ['./department.component.css']
 })
-export class DepartmentComponent implements OnInit {
+export class DepartmentComponent implements OnInit, OnDestroy {
   @ViewChild('deptForm') deptForm!: NgForm
   departmentArr: IDepartment[];
   filteredDepartmentArr: IDepartment[];
@@ -23,6 +21,7 @@ export class DepartmentComponent implements OnInit {
   isApiCallInProgress: boolean;
   displayModalDept: boolean;
   $emp: Observable<IEmployee[]> | undefined;
+  subscription: Subscription[];
 
   constructor(private _empSrv: EmployeeService, private toastr: ToastrService, private _departmentSrv: DepartmentService, private confirm: ConfirmationService, private _masterSrv: MasterService) {
     this.$emp = this._empSrv.getAllEmployees();
@@ -31,6 +30,7 @@ export class DepartmentComponent implements OnInit {
     this.isApiCallInProgress = false;
     this.departmentArr = [];
     this.displayModalDept = false;
+    this.subscription = [];
     this._masterSrv.search.subscribe((res: any) => {
       this.filteredDepartmentArr = this.departmentArr.filter((searchData: any) => {
         let search = res.toLowerCase();
@@ -62,7 +62,7 @@ export class DepartmentComponent implements OnInit {
 
   loadAllDepartment() {
     this._masterSrv.showLoader.next(true);
-    this._departmentSrv.getDepartments().subscribe((res: any) => {
+    const getDepartments = this._departmentSrv.getDepartments().subscribe((res: any) => {
       if (res) {
         this._masterSrv.showLoader.next(false);
         this.departmentArr = res;
@@ -73,12 +73,13 @@ export class DepartmentComponent implements OnInit {
     }, (err: any) => {
       this._masterSrv.showLoader.next(false);
     });
+    this.subscription.push(getDepartments);
   }
 
   onSaveDept() {
     if (!this.isApiCallInProgress) {
       this.isApiCallInProgress = true;
-      this._departmentSrv.createDepartment(this.departmentObj).subscribe((res: any) => {
+      const createDepartment = this._departmentSrv.createDepartment(this.departmentObj).subscribe((res: any) => {
         if (res.result) {
           this.isApiCallInProgress = false;
           this.loadAllDepartment();
@@ -93,6 +94,7 @@ export class DepartmentComponent implements OnInit {
         this.isApiCallInProgress = false;
         this.toastr.error(err.message);
       });
+      this.subscription.push(createDepartment);
     }
   }
 
@@ -104,7 +106,7 @@ export class DepartmentComponent implements OnInit {
   onUpdateDept() {
     if (!this.isApiCallInProgress) {
       this.isApiCallInProgress = true;
-      this._departmentSrv.updateDepartment(this.departmentObj).subscribe((res: any) => {
+      const updateDepartment = this._departmentSrv.updateDepartment(this.departmentObj).subscribe((res: any) => {
         if (res.result) {
           this.isApiCallInProgress = false;
           this.loadAllDepartment();
@@ -119,6 +121,7 @@ export class DepartmentComponent implements OnInit {
         this.isApiCallInProgress = false;
         this.toastr.error(err.message);
       });
+      this.subscription.push(updateDepartment);
     }
   }
 
@@ -126,13 +129,14 @@ export class DepartmentComponent implements OnInit {
     this.confirm.confirm({
       message: 'Are you sure that you want delete?',
       accept: () => {
-        this._departmentSrv.deleteDepartment(item.deptId).subscribe((res: any) => {
+        const deleteDepartment = this._departmentSrv.deleteDepartment(item.deptId).subscribe((res: any) => {
           if (res.result) {
             const index = this.filteredDepartmentArr.findIndex((m: any) => m.deptId == item.deptId);
             this.filteredDepartmentArr.splice(index, 1);
             this.toastr.error('Record Deleted Successfully!!');
           }
         });
+        this.subscription.push(deleteDepartment);
       }
     });
   }
@@ -143,6 +147,12 @@ export class DepartmentComponent implements OnInit {
 
   onReset() {
     this.departmentObj = new createUpdateDepartment();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.forEach((ele: any) => {
+      ele.unsubscribe();
+    });
   }
 
 }

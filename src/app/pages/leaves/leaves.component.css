@@ -124,3 +124,7 @@
   margin-bottom: 0 !important;
   text-transform: capitalize;
 }
+
+:host ::ng-deep .p-splitbutton {
+  padding: 0px 0px 0px 0px !important;
+}
