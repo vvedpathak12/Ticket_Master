@@ -10,22 +10,23 @@
       </div>
       <div class="row">
         <ng-container *ngIf="filteredEmpArr.length !== 0">
-          <div class="col-md-4 my-3" *ngFor="let emp of filteredEmpArr.slice(first, first + rows)">
+          <div class="col-12 col-md-6 col-lg-6 col-xl-4 my-3"
+            *ngFor="let emp of filteredEmpArr.slice(first, first + rows)">
             <div class="card empCard">
               <div class="card-header empCardHeader">
                 <div class="row">
-                  <div class="col-md-2 col-lg-2 mt-3">
+                  <div class="col-3 col-md-2 col-lg-2 mt-3">
                     <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{emp.employeeName |
                       slice: 0:1 | uppercase}}</p>
                   </div>
-                  <div class="col-md-7 col-lg-7 ps-3">
+                  <div class="col-5 col-md-6 col-lg-6 ps-3 ps-md-5 ps-lg-4">
                     <div class="d-flex">
                       <h4 class="fw-bold empName">{{emp.employeeName | titlecase}}</h4>
                     </div>
                     <span>(He/She)</span>
                     <p>{{emp.role | titlecase | na}}</p>
                   </div>
-                  <div class="col-md-3 col-lg-3">
+                  <div class="col-4 col-md-4 col-lg-4">
                     <i class="pi pi-arrow-circle-right editEmpIcon me-4" (click)="onEdit(emp)"></i>
                     <i class="pi pi-trash deleteEmpIcon" (click)="onDelete(emp)"></i>
                   </div>

@@ -2,11 +2,11 @@
   <div class="card-header text-white" [ngClass]="headerClass" [ngStyle]="{'background': headerStyle}"
     *ngIf="isShowCardHeader">
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-7 col-md-8">
         <i [ngClass]="iconClass"></i>
         <span [ngClass]="headerTxtClass">{{headerTxt}}</span>
       </div>
-      <div class="col-md-4 text-end">
+      <div class="col-5 col-md-4 text-end">
         <ng-container *ngIf="showAddBtn">
           <button pButton pRipple class="p-button-success p-button-sm" (click)="onBtnClick()">{{btnTxt}}</button>
         </ng-container>

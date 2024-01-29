@@ -15,14 +15,14 @@
     <div class="col-md-12">
       <ng-container *ngIf="leavesArr.length !== 0">
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-7 col-md-8">
             <div class="d-flex">
               <h4>Leave Approval</h4>
               <p-badge [value]="getPendingLeavesCount().toString()"></p-badge><small class="pendingLeaves"
                 [ngStyle]="{'font-size':'13px'}">Pending</small>
             </div>
           </div>
-          <div class="col-md-4 text-end">
+          <div class="col-5 col-md-4 text-end">
             <p-splitButton label="Pending Leaves" (onClick)="filterPendingLeaves()" [model]="items"
               styleClass="p-button-warning p-button-sm mb-2 mr-2"></p-splitButton>
           </div>
@@ -32,7 +32,7 @@
             <div class="col-md-6 mb-4 col-12" *ngFor="let leaves of filteredLeavesArr.slice(first, first + rows)">
               <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
                 <div class="row">
-                  <div class="col-md-1 col-12 col-lg-1">
+                  <div class="col-md-1 col-2 col-lg-1">
                     <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{leaves.employeeName |
                       uppercase | slice:0:1}}</p>
                   </div>

@@ -5,9 +5,17 @@
       [ngClass]="{'app-side-bar-open':sideBarStatus}"></app-side-bar>
 
     <div class="display-area p-3" [ngClass]="{'display-area-shrink':sideBarStatus}">
-      <!-- Your main content here -->
-      <app-loader></app-loader>
-      <router-outlet></router-outlet>
+      <div *ngIf="isOnline; else noInternet">
+        <!-- Your main content here -->
+        <app-loader></app-loader>
+        <router-outlet></router-outlet>
+      </div>
+
+      <ng-template #noInternet>
+        <div class="offline-container">
+          <img [src]="noInternetImageSrc" alt="No Internet Connection">
+        </div>
+      </ng-template>
     </div>
   </main>
 </div>

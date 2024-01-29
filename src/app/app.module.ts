@@ -39,6 +39,7 @@ import { LeavesComponent } from './pages/leaves/leaves.component';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {PaginatorModule} from 'primeng/paginator';
 import {StepsModule} from 'primeng/steps';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,6 +56,7 @@ import {StepsModule} from 'primeng/steps';
     NaPipe,
     MoreLessComponent,
     LeavesComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,
