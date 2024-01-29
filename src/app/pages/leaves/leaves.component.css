@@ -128,3 +128,12 @@
 :host ::ng-deep .p-splitbutton {
   padding: 0px 0px 0px 0px !important;
 }
+
+.avatar {
+  text-align: center;
+  border-radius: 50%;
+  color: rgb(255, 255, 255) !important;
+  font: 20px / 50px Helvetica, Arial, sans-serif !important;
+  height: 50px;
+  width: 50px;
+}

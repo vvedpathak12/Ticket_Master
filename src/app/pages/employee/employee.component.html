@@ -15,8 +15,8 @@
               <div class="card-header empCardHeader">
                 <div class="row">
                   <div class="col-md-2 col-lg-2 mt-3">
-                    <ngx-avatar [name]="emp.employeeName" [round]="false"
-                      [style]="{'height':'60px','width':'60px','fontSize':'28px','lineHeight': '60px'}"></ngx-avatar>
+                    <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{emp.employeeName |
+                      slice: 0:1 | uppercase}}</p>
                   </div>
                   <div class="col-md-7 col-lg-7 ps-3">
                     <div class="d-flex">
@@ -72,9 +72,10 @@
     <div class="row">
       <div class="col-md-12">
         <form #empForm="ngForm">
-          <p-dialog [header]="empObj.employeeId == 0 ? 'Add Employee':'Update Employee Details'" [(visible)]="displayModalEmp"
-            [modal]="true" [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw', '640px': '95vw'}"
-            [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+          <p-dialog [header]="empObj.employeeId == 0 ? 'Add Employee':'Update Employee Details'"
+            [(visible)]="displayModalEmp" [modal]="true" [style]="{width: '50vw'}"
+            [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000" [draggable]="false"
+            [resizable]="false">
             <div class="row">
               <div class="col-md-6">
                 <label class="fw-bold my-1">Employee Name</label>

@@ -1,8 +1,6 @@
 <div class="container-fluid">
   <div class="row" *ngIf="!showTicketForm">
     <div class="col-md-12">
-      <!-- <app-card [headerTxt]="'Ticket List'" [headerClass]="'bg-dark'" [showAddBtn]="true" [btnTxt]="'New Ticket'"
-        (btnClick)="addNewTicket()"> -->
       <div class="row">
         <div class="col-md-12">
           <button pButton pRipple type="button" class="p-button-primary addTicketBtn" (click)="addNewTicket()">Ticket
@@ -58,8 +56,9 @@
                 <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
                   <td class="">
                     <div class="d-flex ps-2">
-                      <ngx-avatar [style]="{'height':'40px','width':'40px','lineHeight':'40px'}"
-                        [name]="item.createdByEmployee"></ngx-avatar> <span class="ms-2 mt-1 fw-bold">
+                      <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{item.createdByEmployee
+                        | uppercase | slice:0:1}}</p>
+                      <span class="ms-2 mt-1 fw-bold">
                         {{item.createdByEmployee | titlecase}}</span>
                     </div>
                   </td>
@@ -87,9 +86,10 @@
                 </ng-container>
                 <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
                   <td>
-                    <div class="d-flex">
-                      <ngx-avatar [style]="{'height':'40px','width':'40px','lineHeight':'40px'}"
-                        [name]="item.employeeName"></ngx-avatar> <span class="ms-2 mt-1 fw-bold">
+                    <div class="d-flex ps-2">
+                      <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{item.employeeName
+                        | uppercase | slice:0:1}}</p>
+                      <span class="ms-2 mt-1 fw-bold">
                         {{item.employeeName | titlecase}}</span>
                     </div>
                   </td>
@@ -104,9 +104,10 @@
                 </ng-container>
                 <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
                   <td>
-                    <div class="d-flex">
-                      <ngx-avatar [style]="{'height':'40px','width':'40px','lineHeight':'40px'}"
-                        [name]="item.employeeName"></ngx-avatar> <span class="ms-2 mt-1 fw-bold">
+                    <div class="d-flex ps-2">
+                      <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{item.employeeName
+                        | uppercase | slice:0:1}}</p>
+                      <span class="ms-2 mt-1 fw-bold">
                         {{item.employeeName | titlecase}}</span>
                     </div>
                   </td>

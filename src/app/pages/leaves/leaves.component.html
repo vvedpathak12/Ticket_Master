@@ -23,7 +23,6 @@
             </div>
           </div>
           <div class="col-md-4 text-end">
-            <!-- <button pButton pRipple type="button" class="p-button-sm p-button-warning fw-bold" (click)="filterPendingLeaves()">Pending Leaves</button> -->
             <p-splitButton label="Pending Leaves" (onClick)="filterPendingLeaves()" [model]="items"
               styleClass="p-button-warning p-button-sm mb-2 mr-2"></p-splitButton>
           </div>
@@ -34,7 +33,8 @@
               <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
                 <div class="row">
                   <div class="col-md-1 col-12 col-lg-1">
-                    <ngx-avatar [name]="leaves.employeeName"></ngx-avatar>
+                    <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{leaves.employeeName |
+                      uppercase | slice:0:1}}</p>
                   </div>
                   <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
                     <span class="empName">{{leaves.employeeName | titlecase}}</span>
@@ -104,7 +104,8 @@
               <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
                 <div class="row">
                   <div class="col-md-1 col-12 col-lg-1">
-                    <ngx-avatar [name]="leaves.employeeName"></ngx-avatar>
+                    <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{leaves.employeeName |
+                      uppercase | slice:0:1}}</p>
                   </div>
                   <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
                     <span class="empName">{{leaves.employeeName | titlecase}}</span>

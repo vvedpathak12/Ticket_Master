@@ -65,8 +65,16 @@
   font-weight: 500;
 }
 
-.addEmpBtn{
+.addEmpBtn {
   padding: 7px 10px 10px 7px !important;
   font-weight: 500;
 }
 
+.avatar {
+  text-align: center;
+  border-radius: 0px;
+  color: rgb(255, 255, 255) !important;
+  font: 28px / 60px Helvetica, Arial, sans-serif !important;
+  height: 60px;
+  width: 60px;
+}

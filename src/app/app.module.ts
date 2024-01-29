@@ -36,7 +36,6 @@ import { BadgeModule } from 'primeng/badge';
 import { NaPipe } from './shared/pipes/na.pipe';
 import { MoreLessComponent } from './shared/components/more-less/more-less.component';
 import { LeavesComponent } from './pages/leaves/leaves.component';
-import { AvatarModule } from 'ngx-avatar';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {PaginatorModule} from 'primeng/paginator';
 import {StepsModule} from 'primeng/steps';
@@ -80,7 +79,6 @@ import {StepsModule} from 'primeng/steps';
     EditorModule,
     TooltipModule,
     BadgeModule,
-    AvatarModule,
     SplitButtonModule,
     PaginatorModule,
     StepsModule

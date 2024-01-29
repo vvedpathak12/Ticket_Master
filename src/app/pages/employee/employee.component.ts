@@ -169,6 +169,13 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+  generateRandomColor(): string {
+    // You can customize this function to generate or select colors as needed
+    const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex];
+  }
+
   refresh() {
     this.loadAllEmployee();
   }

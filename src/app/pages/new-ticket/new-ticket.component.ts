@@ -244,6 +244,12 @@ export class NewTicketComponent implements OnInit, OnDestroy {
     this.subscription.push(closeTicket);
   }
 
+  generateRandomColor(): string {
+    const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex];
+  }
+
   ngOnDestroy(): void {
     this.subscription.forEach((ele: any) => {
       ele.unsubscribe();
