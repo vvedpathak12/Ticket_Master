@@ -39,6 +39,7 @@ import { LeavesComponent } from './pages/leaves/leaves.component';
 import { AvatarModule } from 'ngx-avatar';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {PaginatorModule} from 'primeng/paginator';
+import {StepsModule} from 'primeng/steps';
 @NgModule({
   declarations: [
     AppComponent,
@@ -81,7 +82,8 @@ import {PaginatorModule} from 'primeng/paginator';
     BadgeModule,
     AvatarModule,
     SplitButtonModule,
-    PaginatorModule
+    PaginatorModule,
+    StepsModule
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

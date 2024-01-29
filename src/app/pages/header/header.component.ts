@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.menuStatus = false;
     this.empObj = new createUpdateEmpObject();
     this.displayModalEmp = false;
-    this.$department = _departmentSrv.getDepartments();
+    this.$department = this._departmentSrv.getDepartments();
     this.emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
     this.contactPattern = "^((\\+91-?)|0)?[0-9]{10}$";
     this.isApiCallInProgress = false;

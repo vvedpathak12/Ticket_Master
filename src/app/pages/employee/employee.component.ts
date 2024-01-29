@@ -33,7 +33,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.filteredEmpArr = [];
     this.empObj = new createUpdateEmpObject();
     this.isApiCallInProgress = false;
-    this.$department = _departmentSrv.getDepartments();
+    this.$department = this._departmentSrv.getDepartments();
     this.$roles = this._empSrv.getAllRoles();
     this.displayModalEmp = false;
     this.emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";

@@ -21,17 +21,17 @@
       </button>
 
       <ul class="dropdown-menu" aria-labelledby="userDropdown"
-        [ngClass]="loggedUserData.role == 'Admin Department Employee'|| loggedUserData.role == 'Department Head' ?'customDropdown-menu':'dropdown-menu'">
+        [ngClass]="loggedUserData.role == 'Super Admin' ?'dropdownMenuSuperAdmin':'' || loggedUserData.role == 'Admin Department Employee' ?'customDropdown-menu':'' || loggedUserData.role == 'Department Head' ?'customDropdownMenuDeptHead':''">
         <li>
-          <ng-container *ngIf="loggedUserData.role == 'Super Admin'">
-            <a class="dropdown-item hand fw-bold" [pTooltip]="loggedUserData.role" tooltipPosition="left"
+          <ng-container>
+            <a class="dropdown-item hand fw-bold" [style]="{'pointer-events':'none'}" [pTooltip]="loggedUserData.role" tooltipPosition="left"
               tooltipStyleClass="custom-tooltip"><i class="fa fa-user-secret me-2"></i>{{loggedUserData.role |
               titlecase}}</a>
           </ng-container>
         </li>
         <li>
           <ng-container *ngIf="loggedUserData.role !== 'Super Admin'">
-            <a class="dropdown-item hand" (click)="getEmployeeById()"><i class="fa fa-user-md me-2"
+            <a class="dropdown-item mt-1 hand" (click)="getEmployeeById()"><i class="fa fa-user-md me-2"
                 aria-hidden="true"></i> Profile</a>
           </ng-container>
         </li>

@@ -7,6 +7,7 @@
           <input type="email" name="emailId" [(ngModel)]="loginObj.emailId" #emailId="ngModel" required
             [ngClass]="{ 'error-border': emailId.invalid && (emailId.touched || emailId.dirty) }">
           <label>Email</label>
+          <i class="fa fa-close closeIcon" *ngIf="loginObj.emailId !== ''" (click)="onClearEmail()"></i>
         </div>
         <div class="input-box">
           <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="loginObj.password"

@@ -82,6 +82,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
+  onClearEmail() {
+    this.loginObj.emailId = '';
+  }
+
   ngOnDestroy(): void {
     this.subscription.forEach((ele: any) => {
       ele.unsubscribe();

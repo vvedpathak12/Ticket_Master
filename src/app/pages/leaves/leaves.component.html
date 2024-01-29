@@ -4,7 +4,8 @@
       <h4 class="mb-0">Leave Management</h4>
       <span class="ps-1" [ngStyle]="{'font-size':'14px','font-weight':'500'}">{{todaysDate| date:'MMMM dd, yyyy'}}</span>
     </div>
-    <div class="col-12 col-md-6 col-lg-6 col-xxl-6 text-center mt-3 mt-md-0 text-md-end">
+    <div class="col-12 col-md-6 col-lg-6 col-xxl-6 text-center mt-3 mt-md-0 text-md-end"
+      *ngIf="loggedInUserData.role !== 'Department Head' && loggedInUserData.role !== 'Super Admin'">
       <button pButton pRipple type="button" label="Create" icon="pi pi-plus"
         class="p-button-rounded p-button-success p-button-sm" (click)="openCreateLeaveModal()"></button>
     </div>
@@ -95,7 +96,8 @@
               </app-card>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="leavesArr.length"
-            (onPageChange)="onPageChange($event)" [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator>
+              (onPageChange)="onPageChange($event)" [showJumpToPageDropdown]="true"
+              [showPageLinks]="false"></p-paginator>
           </ng-container>
           <ng-container *ngIf="showPendingLeaves">
             <div class="col-md-6 mb-4 col-12" *ngFor="let leaves of filteredPendingLeavesArr">

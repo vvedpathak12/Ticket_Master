@@ -1,0 +1,60 @@
+:host ::ng-deep .p-datatable.p-datatable-sm .p-datatable-thead>tr>th {
+  padding: 8px 5px 8px 14px !important;
+  background-color: #fff !important;
+  color: #9a8e8ed9;
+}
+
+:host ::ng-deep .p-datatable.p-datatable-sm .p-datatable-tbody>tr>td {
+  padding: 15px 5px 15px 8px !important;
+  color: rgba(0, 0, 0, 0.815);
+}
+
+.p-datatable .p-datatable-thead>tr>th {
+  background: #c2bcbc !important;
+}
+
+.p-datatable .p-datatable-tbody>tr:hover {
+  cursor: pointer;
+}
+
+.closedBtn:active {
+  background: rgba(0, 0, 0, 0.86);
+}
+
+.closedBtn:hover {
+  background: rgba(0, 0, 0, 0.86);
+}
+
+.onHoldBtn {
+  border-radius: 20px;
+}
+.onHoldBtn:hover {
+  background: #fff;
+  border-color: #0D6EFD;
+  color: #0D6EFD;
+}
+
+.openBtn{
+  background:#3B82F6;
+  border-radius: 20px;
+  padding: 4px 20px 4px 20px;
+  border: none;
+}
+
+.openBtn:hover {
+  color: #fff;
+  background: #3B82F6;
+}
+
+.addTicketBtn{
+  padding: 7px 10px 10px 7px !important;
+  font-weight: 500;
+}
+
+:host ::ng-deep .p-steps .p-steps-item .p-menuitem-link .p-steps-number {
+  color: #040506;
+  background: #ffffff;
+  min-width: 22px;
+  height: 22px;
+  font-size: 14px;
+}

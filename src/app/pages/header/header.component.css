@@ -1,5 +1,6 @@
 nav {
   height: 100%;
+  background: #141725 !important;
 }
 
 .side-nav-button {
@@ -9,7 +10,8 @@ nav {
   font-size: 1.5rem;
   cursor: pointer;
   background: #141725;
-  padding: 20px 20px;
+  /* padding: 20px 20px; */
+  padding: 13px 20px;
 }
 
 .side-nav-button:hover {
@@ -63,10 +65,18 @@ input {
   font-weight: 700;
 }
 
-.dropdown-menu{
-  left: -5px !important;
+.dropdownMenuSuperAdmin {
+  right: 27px !important;
 }
 
-.customDropdown-menu{
-  left: -24px !important;
+.dropdown-menu {
+  left: -10px !important;
+}
+
+.customDropdown-menu {
+  left: -125px !important;
+}
+
+.customDropdownMenuDeptHead {
+  left: -30px !important;
 }

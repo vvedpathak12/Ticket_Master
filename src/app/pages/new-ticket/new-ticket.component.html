@@ -1,122 +1,154 @@
 <div class="container-fluid">
   <div class="row" *ngIf="!showTicketForm">
     <div class="col-md-12">
-      <app-card [headerTxt]="'Ticket List'" [headerClass]="'bg-dark'" [showAddBtn]="true" [btnTxt]="'New Ticket'"
-        (btnClick)="addNewTicket()">
-        <div class="row">
-          <div class="col-md-12">
-            <p-table [value]="filteredTicketArr" [paginator]="true" [rows]="10" [showJumpToPageDropdown]="true"
-              [showPageLinks]="false" styleClass="p-datatable-gridlines p-datatable-sm" [responsive]="true">
-              <ng-template pTemplate="header">
-                <tr class="button-cell">
-                  <th style="width: 3%;">Sr</th>
-                  <th pSortableColumn="ticketNo">Ticket No.<p-sortIcon field="ticketNo"></p-sortIcon></th>
-                  <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
-                    <th pSortableColumn="deptName">Department<p-sortIcon field="deptName"></p-sortIcon> </th>
-                    <th pSortableColumn="contactNo">Contact<p-sortIcon field="contactNo"></p-sortIcon></th>
-                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
-                    <th pSortableColumn="createdByEmployee">Created By<p-sortIcon
-                        field="createdByEmployee"></p-sortIcon></th>
-                    <th pSortableColumn="assignedToEmployee">Assigned To<p-sortIcon
-                        field="assignedToEmployee"></p-sortIcon></th>
-                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
-                  </ng-container>
-                  <ng-container *ngIf="loggedInUserData.role == 'Employee'">
-                    <th pSortableColumn="deptName">Department<p-sortIcon field="deptName"></p-sortIcon> </th>
-                    <th pSortableColumn="contactNo">Contact<p-sortIcon field="contactNo"></p-sortIcon></th>
-                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
-                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
-                    <th pSortableColumn="assignedToEmployee">Assigned To<p-sortIcon
-                        field="assignedToEmployee"></p-sortIcon></th>
-                  </ng-container>
-                  <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
-                    <th pSortableColumn="employeeName">Created By<p-sortIcon field="employeeName"></p-sortIcon> </th>
-                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
-                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
-                    <th pSortableColumn="assignedToEmployee">Assigned To<p-sortIcon
-                        field="assignedToEmployee"></p-sortIcon></th>
-                    <th pSortableColumn="requestDetails">Details<p-sortIcon field="requestDetails"></p-sortIcon></th>
-                  </ng-container>
-                  <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
-                    <th pSortableColumn="deptName">Department<p-sortIcon field="deptName"></p-sortIcon> </th>
-                    <th pSortableColumn="employeeName">Created By<p-sortIcon field="employeeName"></p-sortIcon> </th>
-                    <th pSortableColumn="severity">Severity<p-sortIcon field="severity"></p-sortIcon></th>
-                    <th pSortableColumn="state">Status<p-sortIcon field="state"></p-sortIcon></th>
-                    <th pSortableColumn="requestDetails">Details<p-sortIcon field="requestDetails"></p-sortIcon></th>
-                  </ng-container>
-                  <th style="width: 10%;">Action</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-item let-sr="rowIndex">
-                <tr class="button-cell">
-                  <td>{{sr+1}}</td>
-                  <td> {{item.ticketNo}}</td>
-                  <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
-                    <td> {{item.deptName}}</td>
-                    <td> {{item.contactNo}}</td>
-                    <td> {{item.severity}}</td>
-                    <td> {{item.createdByEmployee}}</td>
-                    <td> {{item.assignedToEmployee | na}}</td>
-                    <td> <p-badge
-                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
-                        [value]="item.state"></p-badge>
-                    </td>
-                  </ng-container>
-                  <ng-container *ngIf="loggedInUserData.role == 'Employee'">
-                    <td> {{item.deptName}}</td>
-                    <td> {{item.contactNo}}</td>
-                    <td> {{item.severity}}</td>
-                    <td> <p-badge
-                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
-                        [value]="item.state"></p-badge>
-                    </td>
-                    <td> {{item.assignedToEmployee | na}}</td>
-                  </ng-container>
-                  <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
-                    <td> {{item.employeeName}}</td>
-                    <td> {{item.severity}}</td>
-                    <td> <p-badge
-                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
-                        [value]="item.state"></p-badge>
-                    </td>
-                    <td> {{item.assignedToEmployee | na}}</td>
-                    <td [innerHTML]="item.requestDetails"></td>
-                  </ng-container>
-                  <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
-                    <td> {{item.deptName}}</td>
-                    <td> {{item.employeeName}}</td>
-                    <td> {{item.severity}}</td>
-                    <td> <p-badge
-                        [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
-                        [value]="item.state"></p-badge>
-                    </td>
-                    <td [innerHTML]="item.requestDetails"></td>
-                  </ng-container>
-                  <td>
-                    <button *ngIf="loggedInUserData.role == 'Department Head'" pButton pRipple
-                      class="p-button-success p-button-sm me-2"
-                      (click)="openAssignTicketModal(item.ticketId)">Assign</button>
-                    <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'Assigned'"
-                      pButton pRipple class="p-button-success p-button-sm me-2"
-                      (click)="startAssignedTicket(item.ticketId)">Start Ticket</button>
-                    <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'In-Progress'"
-                      pButton pRipple class="p-button-danger p-button-sm me-2"
-                      (click)="closeAssignedTicket(item.ticketId)">Close Ticket</button>
-                    <button pButton pRipple class="p-button-danger p-button-sm" (click)="onDelete(item)"
-                      *ngIf="item.state == 'Un-Assigned'">Delete
-                      Ticket</button>
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td colspan="8" class="text-center">No Record Found</td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
+      <!-- <app-card [headerTxt]="'Ticket List'" [headerClass]="'bg-dark'" [showAddBtn]="true" [btnTxt]="'New Ticket'"
+        (btnClick)="addNewTicket()"> -->
+      <div class="row">
+        <div class="col-md-12">
+          <button pButton pRipple type="button" class="p-button-primary addTicketBtn" (click)="addNewTicket()">Ticket
+            Management
+            <i class="pi pi-plus ms-2 fw-bold"></i></button>
         </div>
-      </app-card>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <p-table [value]="filteredTicketArr" [paginator]="true" [rows]="10" [showJumpToPageDropdown]="true"
+            [showPageLinks]="false" styleClass="p-datatable-sm" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr class="button-cell">
+                <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
+                  <th>Requester</th>
+                  <th>Ticket No.</th>
+                  <th>Department</th>
+                  <th>Contact</th>
+                  <th>Severity</th>
+                  <th>Assigned To</th>
+                  <th>Status</th>
+                </ng-container>
+                <ng-container *ngIf="loggedInUserData.role == 'Employee'">
+                  <th>Sr</th>
+                  <th>Ticket No.</th>
+                  <th>Department</th>
+                  <th>Contact></th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Assigned To</th>
+                </ng-container>
+                <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
+                  <th>Requester</th>
+                  <th>Ticket No.</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Assigned To</th>
+                  <th>Details</th>
+                </ng-container>
+                <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
+                  <th>Requester</th>
+                  <th>Ticket No.</th>
+                  <th>Department</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Details</th>
+                </ng-container>
+                <th style="width: 10%;">Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-sr="rowIndex">
+              <tr class="button-cell">
+                <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
+                  <td class="">
+                    <div class="d-flex ps-2">
+                      <ngx-avatar [style]="{'height':'40px','width':'40px','lineHeight':'40px'}"
+                        [name]="item.createdByEmployee"></ngx-avatar> <span class="ms-2 mt-1 fw-bold">
+                        {{item.createdByEmployee | titlecase}}</span>
+                    </div>
+                  </td>
+                  <td> {{item.ticketNo}}</td>
+                  <td> {{item.deptName}}</td>
+                  <td> {{item.contactNo}}</td>
+                  <td> {{item.severity}}</td>
+                  <td> {{item.assignedToEmployee !== null? item.assignedToEmployee :'unassigned'}}</td>
+                  <td> <p-badge
+                      [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                      [value]="item.state"></p-badge>
+                  </td>
+                </ng-container>
+                <ng-container *ngIf="loggedInUserData.role == 'Employee'">
+                  <td> {{sr+1}}</td>
+                  <td> {{item.ticketNo}}</td>
+                  <td> {{item.deptName}}</td>
+                  <td> {{item.contactNo}}</td>
+                  <td> {{item.severity}}</td>
+                  <td> <p-badge
+                      [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                      [value]="item.state"></p-badge>
+                  </td>
+                  <td> {{item.assignedToEmployee !== null? item.assignedToEmployee :'unassigned'}}</td>
+                </ng-container>
+                <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
+                  <td>
+                    <div class="d-flex">
+                      <ngx-avatar [style]="{'height':'40px','width':'40px','lineHeight':'40px'}"
+                        [name]="item.employeeName"></ngx-avatar> <span class="ms-2 mt-1 fw-bold">
+                        {{item.employeeName | titlecase}}</span>
+                    </div>
+                  </td>
+                  <td> {{item.ticketNo}}</td>
+                  <td> {{item.severity}}</td>
+                  <td> <p-badge
+                      [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                      [value]="item.state"></p-badge>
+                  </td>
+                  <td> {{item.assignedToEmployee !== null? item.assignedToEmployee :'unassigned'}}</td>
+                  <td [innerHTML]="item.requestDetails"></td>
+                </ng-container>
+                <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
+                  <td>
+                    <div class="d-flex">
+                      <ngx-avatar [style]="{'height':'40px','width':'40px','lineHeight':'40px'}"
+                        [name]="item.employeeName"></ngx-avatar> <span class="ms-2 mt-1 fw-bold">
+                        {{item.employeeName | titlecase}}</span>
+                    </div>
+                  </td>
+                  <td> {{item.ticketNo}}</td>
+                  <td> {{item.deptName}}</td>
+                  <td> {{item.severity}}</td>
+                  <td> <p-badge
+                      [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
+                      [value]="item.state"></p-badge>
+                  </td>
+                  <td [innerHTML]="item.requestDetails"></td>
+                </ng-container>
+                <td>
+                  <button *ngIf="loggedInUserData.role == 'Department Head'" pButton pRipple
+                    class="p-button-success p-button-sm me-2"
+                    (click)="openAssignTicketModal(item.ticketId)">Assign</button>
+                  <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'Assigned'"
+                    pButton pRipple class="p-button-success p-button-sm me-2"
+                    (click)="startAssignedTicket(item.ticketId)">Start Ticket</button>
+                  <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'In-Progress'"
+                    pButton pRipple class="p-button-danger p-button-sm me-2"
+                    (click)="closeAssignedTicket(item.ticketId)">Close Ticket</button>
+                  <button pButton pRipple class="p-button-danger p-button-sm" (click)="onDelete(item)"
+                    *ngIf="item.state == 'Un-Assigned'">Delete
+                    Ticket</button>
+                  <button type="button" class="btn btn-outline-primary btn-sm onHoldBtn"
+                    *ngIf="item.state == 'Assigned'">On-hold</button>
+                  <button type="button" class="btn btn-primary btn-sm openBtn"
+                    *ngIf="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Super Admin') && item.state == 'In-Progress'">Open</button>
+                  <button class="btn btn-dark btn-sm closedBtn" *ngIf="item.state == 'Closed'">Closed</button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="8" class="text-center">No Record Found</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      <!-- </app-card> -->
       <!-- modal starts -->
       <div class="row">
         <div class="col-md-12">
