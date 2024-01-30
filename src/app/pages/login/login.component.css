@@ -166,12 +166,16 @@ h2 {
   text-decoration: underline;
 }
 
+#password-input-container {
+  position: relative;
+}
+
 .password-eye {
   color: #ffff;
   position: absolute;
   top: 49%;
   transform: translateY(-50%);
-  right: 20%;
+  right: 8%;
   font-size: large;
   cursor: pointer;
 }
@@ -199,6 +203,12 @@ h2 {
   color: #fff !important;
   margin: -3px 0px 0px 0px !important;
   font-size: 14px;
+}
+
+.errorMessage {
+  margin: -20px 0px 0px 7px !important;
+  font-size: 14px;
+  color: #f30e0e;
 }
 
 @media(max-width: 575.98px) {

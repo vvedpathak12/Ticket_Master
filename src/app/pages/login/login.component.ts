@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   isApiCallInProgress: boolean;
   showPassword: boolean;
   rememberMe: boolean;
+  emailPattern: string;
   subscription: Subscription[];
 
   constructor(private router: Router, private toastr: ToastrService, private _login: LoginService) {
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isApiCallInProgress = false;
     this.showPassword = false;
     this.rememberMe = false;
+    this.emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$";
     this.subscription = [];
     const rememberLoginInfo = sessionStorage.getItem('rememberLogin');
     if (rememberLoginInfo != null) {
