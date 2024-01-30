@@ -200,3 +200,22 @@ h2 {
   margin: -3px 0px 0px 0px !important;
   font-size: 14px;
 }
+
+@media(max-width: 575.98px) {
+  .container span {
+    display: none !important;
+  }
+}
+
+@media(min-width: 767.98px) {
+  .container span {
+    width: 25px !important;
+    height: 6px !important;
+    background: #f79e05;
+    border-radius: 8px;
+    transform-origin: 128px;
+    transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
+    animation: animateBlink 3s linear infinite;
+    animation-delay: calc(var(--i) * (3s / 50));
+  }
+}
