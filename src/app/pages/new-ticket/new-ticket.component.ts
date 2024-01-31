@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService } from 'primeng/api';
@@ -23,13 +23,15 @@ export class NewTicketComponent implements OnInit, OnDestroy {
   filteredTicketArr: any[];
   $emp: Observable<IEmployeeById[]> | undefined;
   isApiCallInProgress: boolean;
+  ticketLoadingState: { [key: number]: boolean } = {};
   loggedInUserData: any;
   showTicketForm: boolean;
   displayModalAssignTicket: boolean;
   assignTicketObj: assignTicketObject;
+  itemColors: { [key: string]: string } = {}; // Map to store colors for each item
   subscription: Subscription[];
 
-  constructor(private _departmentSrv: DepartmentService, private toastr: ToastrService, private _ticketSrv: TicketService, private _masterSrv: MasterService, private _empSrv: EmployeeService, private confirm: ConfirmationService) {
+  constructor(private _departmentSrv: DepartmentService, private toastr: ToastrService, private _ticketSrv: TicketService, private _masterSrv: MasterService, private _empSrv: EmployeeService, private confirm: ConfirmationService, private cdr: ChangeDetectorRef) {
     this.ticketObj = new createNewTicketObject();
     this.ticketArr = [];
     this.filteredTicketArr = [];
@@ -93,6 +95,7 @@ export class NewTicketComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.ticketArr = res.data;
         this.filteredTicketArr = res.data;
+        this.setRandomColorsForAllItems(); // Set colors after loading tickets
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -109,6 +112,7 @@ export class NewTicketComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.ticketArr = res.data;
         this.filteredTicketArr = res.data;
+        this.setRandomColorsForAllItems(); // Set colors after loading tickets
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -125,6 +129,7 @@ export class NewTicketComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.ticketArr = res.data;
         this.filteredTicketArr = res.data;
+        this.setRandomColorsForAllItems(); // Set colors after loading tickets
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -141,6 +146,7 @@ export class NewTicketComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.ticketArr = res.data;
         this.filteredTicketArr = res.data;
+        this.setRandomColorsForAllItems(); // Set colors after loading tickets
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -225,29 +231,77 @@ export class NewTicketComponent implements OnInit, OnDestroy {
   }
 
   startAssignedTicket(ticketId: number) {
-    const startTicket = this._ticketSrv.startTicket(ticketId).subscribe((res: any) => {
-      if (res.result) {
-        this.toastr.success('Ticket Status Changed to Started');
-        this.loadTicketsByRoles();
+    this.confirm.confirm({
+      message: 'Are you sure you want to start this ticket?',
+      accept: () => {
+        if (!this.ticketLoadingState[ticketId]) {
+          this.ticketLoadingState[ticketId] = true;
+          const startTicket = this._ticketSrv.startTicket(ticketId).subscribe((res: any) => {
+            if (res.result) {
+              this.ticketLoadingState[ticketId] = false;
+              this.toastr.success('Ticket Status Changed to Started');
+              this.loadTicketsByRoles();
+            } else {
+              this.ticketLoadingState[ticketId] = false;
+              this.toastr.error(res.message);
+            }
+          }, (err: any) => {
+            this.ticketLoadingState[ticketId] = false;
+            this.toastr.error(err.message);
+          });
+          this.subscription.push(startTicket);
+        }
       }
     });
-    this.subscription.push(startTicket);
   }
 
   closeAssignedTicket(ticketId: number) {
-    const closeTicket = this._ticketSrv.closeTicket(ticketId).subscribe((res: any) => {
-      if (res.result) {
-        this.toastr.success('Ticket Status Changed to Closed');
-        this.loadTicketsByRoles();
+    this.confirm.confirm({
+      message: 'Are you sure you want to close this ticket?',
+      accept: () => {
+        if (!this.ticketLoadingState[ticketId]) {
+          this.ticketLoadingState[ticketId] = true;
+          const closeTicket = this._ticketSrv.closeTicket(ticketId).subscribe((res: any) => {
+            if (res.result) {
+              this.ticketLoadingState[ticketId] = false;
+              this.toastr.success('Ticket Status Changed to Closed');
+              this.loadTicketsByRoles();
+            } else {
+              this.ticketLoadingState[ticketId] = false;
+              this.toastr.error(res.message);
+            }
+          }, (err: any) => {
+            this.ticketLoadingState[ticketId] = false;
+            this.toastr.error(err.message);
+          });
+          this.subscription.push(closeTicket);
+        }
       }
     });
-    this.subscription.push(closeTicket);
   }
 
-  generateRandomColor(): string {
-    const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+  // Function to generate a random color
+  getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  // Set random color for a specific item
+  setRandomColorForItem(item: any): void {
+    const color = this.getRandomColor();
+    this.itemColors[item.ticketId] = color;
+  }
+
+  // Call this method to set random colors for all items
+  setRandomColorsForAllItems(): void {
+    this.filteredTicketArr.forEach((item) => {
+      this.setRandomColorForItem(item);
+    });
+    this.cdr.detectChanges(); // Manually trigger change detection
   }
 
   ngOnDestroy(): void {

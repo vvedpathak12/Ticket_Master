@@ -37,7 +37,7 @@
                   <th>Ticket No.</th>
                   <th>Severity</th>
                   <th>Status</th>
-                  <th>Assigned To</th>
+                  <!-- <th>Assigned To</th> -->
                   <th>Details</th>
                 </ng-container>
                 <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
@@ -56,7 +56,7 @@
                 <ng-container *ngIf="loggedInUserData.role == 'Super Admin'">
                   <td class="">
                     <div class="d-flex ps-2">
-                      <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{item.createdByEmployee
+                      <p class="avatar" [ngStyle]="{'background-color': itemColors[item.ticketId]}">{{item.createdByEmployee
                         | uppercase | slice:0:1}}</p>
                       <span class="ms-2 mt-1 fw-bold">
                         {{item.createdByEmployee | titlecase}}</span>
@@ -87,7 +87,7 @@
                 <ng-container *ngIf="loggedInUserData.role == 'Department Head'">
                   <td>
                     <div class="d-flex ps-2">
-                      <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{item.employeeName
+                      <p class="avatar" [ngStyle]="{'background-color': itemColors[item.ticketId]}">{{item.employeeName
                         | uppercase | slice:0:1}}</p>
                       <span class="ms-2 mt-1 fw-bold">
                         {{item.employeeName | titlecase}}</span>
@@ -99,13 +99,13 @@
                       [severity]="item.state == 'Assigned'? 'success':'' || item.state == 'Un-Assigned'? 'warning':'' || item.state == 'Closed'? 'danger':''"
                       [value]="item.state"></p-badge>
                   </td>
-                  <td> {{item.assignedToEmployee !== null? item.assignedToEmployee :'unassigned'}}</td>
+                  <!-- <td> {{item.assignedToEmployee !== null? item.assignedToEmployee :'unassigned'}}</td> -->
                   <td [innerHTML]="item.requestDetails"></td>
                 </ng-container>
                 <ng-container *ngIf="loggedInUserData.role == 'Admin Department Employee'">
                   <td>
                     <div class="d-flex ps-2">
-                      <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{item.employeeName
+                      <p class="avatar" [ngStyle]="{'background-color': itemColors[item.ticketId]}">{{item.employeeName
                         | uppercase | slice:0:1}}</p>
                       <span class="ms-2 mt-1 fw-bold">
                         {{item.employeeName | titlecase}}</span>
@@ -126,15 +126,19 @@
                     (click)="openAssignTicketModal(item.ticketId)">Assign</button>
                   <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'Assigned'"
                     pButton pRipple class="p-button-success p-button-sm me-2"
-                    (click)="startAssignedTicket(item.ticketId)">Start Ticket</button>
+                    (click)="startAssignedTicket(item.ticketId)">Start Ticket <span
+                      *ngIf="ticketLoadingState[item.ticketId]"
+                      class="spinner-border spinner-border-sm ms-2"></span></button>
                   <button *ngIf="loggedInUserData.role == 'Admin Department Employee' && item.state == 'In-Progress'"
                     pButton pRipple class="p-button-danger p-button-sm me-2"
-                    (click)="closeAssignedTicket(item.ticketId)">Close Ticket</button>
+                    (click)="closeAssignedTicket(item.ticketId)">Close Ticket <span
+                      *ngIf="ticketLoadingState[item.ticketId]"
+                      class="spinner-border spinner-border-sm ms-2"></span></button>
                   <button pButton pRipple class="p-button-danger p-button-sm" (click)="onDelete(item)"
                     *ngIf="item.state == 'Un-Assigned'">Delete
                     Ticket</button>
                   <button type="button" class="btn btn-outline-primary btn-sm onHoldBtn"
-                    *ngIf="item.state == 'Assigned'">On-hold</button>
+                    *ngIf="loggedInUserData.role !== 'Admin Department Employee' && item.state == 'Assigned'">On-hold</button>
                   <button type="button" class="btn btn-primary btn-sm openBtn"
                     *ngIf="(loggedInUserData.role == 'Employee' || loggedInUserData.role == 'Super Admin') && item.state == 'In-Progress'">Open</button>
                   <button class="btn btn-dark btn-sm closedBtn" *ngIf="item.state == 'Closed'">Closed</button>
@@ -154,7 +158,7 @@
       <div class="row">
         <div class="col-md-12">
           <form #assignTicketForm="ngForm">
-            <p-dialog header="Add Department" [(visible)]="displayModalAssignTicket" [modal]="true"
+            <p-dialog header="Assign Ticket" [(visible)]="displayModalAssignTicket" [modal]="true"
               [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw', '640px': '95vw'}" [baseZIndex]="10000"
               [draggable]="false" [resizable]="false">
               <div class="row">

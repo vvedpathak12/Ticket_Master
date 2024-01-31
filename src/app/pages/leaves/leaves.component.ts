@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -31,9 +31,10 @@ export class LeavesComponent implements OnInit, OnDestroy {
   items: any[];
   first: number;
   rows: number;
+  itemColors: { [key: string]: string } = {};
   subscription: Subscription[];
 
-  constructor(private _masterSrv: MasterService, private _leaveSrv: LeavesService, private router: Router, private toastr: ToastrService, private confirm: ConfirmationService) {
+  constructor(private _masterSrv: MasterService, private _leaveSrv: LeavesService, private router: Router, private toastr: ToastrService, private confirm: ConfirmationService, private cdr: ChangeDetectorRef) {
     this.leaveObj = new leaveObject();
     this.leavesArr = [];
     this.filteredLeavesArr = [];
@@ -108,6 +109,7 @@ export class LeavesComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.leavesArr = res.data;
         this.filteredLeavesArr = res.data;
+        this.setRandomColorsForAllItems();
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -124,6 +126,7 @@ export class LeavesComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.leavesArr = res.data;
         this.filteredLeavesArr = res.data;
+        this.setRandomColorsForAllItems();
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -140,6 +143,7 @@ export class LeavesComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.leavesArr = res.data;
         this.filteredLeavesArr = res.data;
+        this.setRandomColorsForAllItems();
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -369,10 +373,25 @@ export class LeavesComponent implements OnInit, OnDestroy {
     this.displayModalCreateLeave = false;
   }
 
-  generateRandomColor(): string {
-    const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+  getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  setRandomColorForItem(item: any): void {
+    const color = this.getRandomColor();
+    this.itemColors[item.leaveId] = color;
+  }
+
+  setRandomColorsForAllItems(): void {
+    this.filteredLeavesArr.forEach((item) => {
+      this.setRandomColorForItem(item);
+    });
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {

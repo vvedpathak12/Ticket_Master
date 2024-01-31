@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService } from 'primeng/api';
@@ -26,9 +26,10 @@ export class EmployeeComponent implements OnInit, OnDestroy {
   contactPattern: string;
   first: number;
   rows: number;
+  itemColors: { [key: string]: string } = {};
   subscription: Subscription[];
 
-  constructor(private _empSrv: EmployeeService, private toastr: ToastrService, private _departmentSrv: DepartmentService, private confirm: ConfirmationService, private _masterSrv: MasterService) {
+  constructor(private _empSrv: EmployeeService, private toastr: ToastrService, private _departmentSrv: DepartmentService, private confirm: ConfirmationService, private _masterSrv: MasterService, private cdr: ChangeDetectorRef) {
     this.empArr = [];
     this.filteredEmpArr = [];
     this.empObj = new createUpdateEmpObject();
@@ -71,6 +72,7 @@ export class EmployeeComponent implements OnInit, OnDestroy {
         this._masterSrv.showLoader.next(false);
         this.empArr = res;
         this.filteredEmpArr = res;
+        this.setRandomColorsForAllItems();
       } else {
         this._masterSrv.showLoader.next(false);
       }
@@ -169,11 +171,25 @@ export class EmployeeComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  generateRandomColor(): string {
-    // You can customize this function to generate or select colors as needed
-    const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+  getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  setRandomColorForItem(item: any): void {
+    const color = this.getRandomColor();
+    this.itemColors[item.employeeId] = color;
+  }
+
+  setRandomColorsForAllItems(): void {
+    this.filteredEmpArr.forEach((item) => {
+      this.setRandomColorForItem(item);
+    });
+    this.cdr.detectChanges();
   }
 
   refresh() {

@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiEndPoint: 'https://freeapi.miniprojectideas.com/api/Tickets/'
+  apiEndPoint: 'http://freeapi.gerasim.in/api/Tickets/'
 };
 
 /*

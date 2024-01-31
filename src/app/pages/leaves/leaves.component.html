@@ -33,7 +33,7 @@
               <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
                 <div class="row">
                   <div class="col-md-1 col-2 col-lg-1">
-                    <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{leaves.employeeName |
+                    <p class="avatar" [ngStyle]="{'background-color': itemColors[leaves.leaveId]}">{{leaves.employeeName |
                       uppercase | slice:0:1}}</p>
                   </div>
                   <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
@@ -104,7 +104,7 @@
               <app-card [isShowCardHeader]="false" [cardDesign]="'cardBodyClass'">
                 <div class="row">
                   <div class="col-md-1 col-12 col-lg-1">
-                    <p class="avatar" [ngStyle]="{'background-color': generateRandomColor()}">{{leaves.employeeName |
+                    <p class="avatar" [ngStyle]="{'background-color': itemColors[leaves.leaveId]}">{{leaves.employeeName |
                       uppercase | slice:0:1}}</p>
                   </div>
                   <div class="col-md-6 col-lg-5 ps-lg-5 ps-xl-4 ps-4">
@@ -205,7 +205,7 @@
           <div class="col-md-6">
             <label class="fw-bold">To Date</label>
             <input pInputText type="date" class="form-control" [(ngModel)]="leaveObj.toDate"
-              (ngModelChange)="onDateChange()" [min]="getTodayDate()" name="toDate" #toDate="ngModel" required>
+              (ngModelChange)="onDateChange()" [min]="getTodayDate()" name="toDate" #toDate="ngModel" required [disabled]="leaveObj.fromDate == null">
             <div class="validation-error" *ngIf="toDate.touched || toDate.dirty">
               <span *ngIf="toDate.errors?.['required']">Select Required Last Date</span>
             </div>
